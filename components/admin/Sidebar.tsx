@@ -124,28 +124,38 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="w-56 shrink-0 bg-bg-inverse-default min-h-screen flex flex-col border-r border-border-default">
-      <div className="px-4 py-4 border-b border-border-default">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-bg-accent-brand1-default rounded-lg flex items-center justify-center">
+    <aside className="w-[220px] shrink-0 bg-bg-default min-h-screen flex flex-col border-r border-border-default">
+      {/* Header */}
+      <div className="px-[14px] py-[16px] border-b border-border-default flex flex-col gap-2">
+        <div className="flex items-center gap-1">
+          <div className="w-[34px] h-[34px] bg-bg-accent-brand1-default rounded-lg flex items-center justify-center shrink-0">
             <span className="text-white text-heading-xs font-bold">M</span>
           </div>
-          <span className="text-body-bold-md text-fg-inverse-default">앨범버디 관리시스템</span>
+          <span className="text-[14px] font-bold text-fg-default px-1 leading-5 tracking-tight">앨범버디 관리시스템</span>
         </div>
-        <p className="text-label-sm text-fg-inverse-secondary mt-1">chocopie@makestar.com</p>
+        <div className="flex items-center gap-1 px-2 py-1 rounded bg-bg-subtle border border-border-default">
+          <span className="flex-1 text-[12px] text-fg-subtle truncate leading-4">chocopie@makestar.com</span>
+        </div>
       </div>
 
-      <nav className="flex-1 py-2 overflow-y-auto">
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto">
         {navGroups.map((group) => {
           const isGroupActive = group.children.some(c => pathname === c.href || pathname.startsWith(c.href + '/'))
           return (
             <div key={group.label}>
-              <div className={cn(
-                'flex items-center gap-2 px-4 py-2 text-label-md cursor-default',
-                isGroupActive ? 'text-fg-inverse-default' : 'text-fg-inverse-secondary',
-              )}>
-                <span className="shrink-0">{group.icon}</span>
-                <span>{group.label}</span>
+              {/* Group header — h-[44px] per Figma */}
+              <div className="flex items-center h-[44px] p-[8px]">
+                <div className={cn(
+                  'flex flex-1 items-center gap-2 h-full px-3 rounded-lg',
+                  isGroupActive ? 'text-fg-default' : 'text-fg-subtle',
+                )}>
+                  <span className="shrink-0 size-6">{group.icon}</span>
+                  <span className="flex-1 text-[14px] font-semibold leading-5 tracking-tight">{group.label}</span>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0 text-fg-subtle" aria-hidden="true">
+                    <path d="M5 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </div>
 
               {group.children.map((child) => {
@@ -155,10 +165,10 @@ export function Sidebar() {
                     key={child.href}
                     href={child.href}
                     className={cn(
-                      'flex items-center pl-10 pr-4 py-1.5 text-label-md transition-colors',
+                      'flex items-center mx-2 pl-[44px] pr-3 py-2 rounded-lg text-[14px] font-semibold leading-5 tracking-tight transition-colors',
                       isActive
-                        ? 'bg-bg-accent-brand1-subtlest text-fg-accent-brand1-default font-semibold'
-                        : 'text-fg-inverse-secondary hover:text-fg-inverse-default hover:bg-bg-inverse-subtlest',
+                        ? 'bg-bg-accent-brand1-subtlest border border-border-accent-brand1-subtlest text-fg-accent-brand1-default'
+                        : 'text-fg-subtle hover:text-fg-default hover:bg-bg-subtle',
                     )}
                   >
                     {child.label}

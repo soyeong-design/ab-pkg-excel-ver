@@ -176,9 +176,9 @@ export function PackagingListContent() {
                 개의 {tabs.find(t => t.id === activeTab)?.label} 목록
               </span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
-                size="sm" variant="outline" color="red"
+                size="lg" variant="outline" color="red"
                 isDisabled={!hasSelection}
                 onClick={() => {
                   const first = allRequests.find(r => selectedIds.has(r.requestId))
@@ -187,10 +187,10 @@ export function PackagingListContent() {
               >
                 패키징 요청 취소
               </Button>
-              <Button size="sm" variant="outline" color="red" isDisabled={!hasSelection}>
+              <Button size="lg" variant="outline" color="red" isDisabled={!hasSelection}>
                 패키징 보류
               </Button>
-              <Button size="sm" color="brand1" isDisabled={!hasSelection}>
+              <Button size="lg" color="brand1" isDisabled={!hasSelection}>
                 패키징 완료 처리
               </Button>
             </div>
