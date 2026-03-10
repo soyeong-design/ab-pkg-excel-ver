@@ -14,6 +14,7 @@ export interface PackagingItem {
   packageAlias: string
   packagingOption: PackagingOption
   packageList: string[]
+  userNote?: string
   productList: ProductItem[]
   storageLocation: string
   adminRecord: string
@@ -32,6 +33,7 @@ export const MOCK_PACKAGING_ITEMS: PackagingItem[] = [
     packageAlias: '잉어7314',
     packagingOption: '합포장',
     packageList: ['구성품만', '전체 (앨범, 포스터, 포토북 제외)'],
+    userNote: 'the signed album plus all the pobs and the signed polaroid.',
     productList: [
       { name: '[PRE-ORDER] 82MAJOR - 2026 SPEC CALENDAR [우리의 계절]', qty: 2 },
       { name: '특전포카', qty: 5, isPob: true },
@@ -52,6 +54,7 @@ export const MOCK_PACKAGING_ITEMS: PackagingItem[] = [
     packageAlias: '잉어320',
     packagingOption: '구성품만',
     packageList: ['포토카드만'],
+    userNote: 'only the photocard, no album needed.',
     productList: [
       { name: '이달의 소녀 LOONA 아르테미스 굿즈 일괄', qty: 5 },
     ],

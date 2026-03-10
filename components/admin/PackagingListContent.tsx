@@ -88,32 +88,19 @@ export function PackagingListContent() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-body-bold-md text-fg-default">검색</span>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-label-md text-fg-subtle">패키징 요청 ID</label>
-              <input
-                className="h-9 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
-                placeholder="요청 ID 입력"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-label-md text-fg-subtle">유저 ID</label>
-              <input
-                className="h-9 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
-                placeholder="유저 ID 입력"
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-label-md text-fg-subtle">패키지 번호</label>
-              <input
-                className="h-9 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
-                placeholder="패키지 번호 입력"
-              />
-            </div>
+          <div className="w-full">
+            <input
+              className="w-full h-10 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
+              placeholder="패키징 요청 ID, 유저 ID, 패키지 번호 등을 입력하세요"
+            />
           </div>
           <div className="flex justify-end gap-2 mt-3">
             <Button size="md" variant="outline" color="default">검색 초기화</Button>
-            <Button size="md" color="brand1">조회하기</Button>
+            <Button size="md" color="brand1" leftIcon={
+              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            }>조회하기</Button>
           </div>
         </div>
 
@@ -135,7 +122,7 @@ export function PackagingListContent() {
                 }}>
                 패키징 요청 취소
               </Button>
-              <Button size="sm" variant="outline" color="default" isDisabled={!hasSelection}>
+              <Button size="sm" variant="outline" color="brand1" isDisabled={!hasSelection}>
                 패키징 보류
               </Button>
               <Button size="sm" color="brand1" isDisabled={!hasSelection}>
@@ -172,6 +159,7 @@ export function PackagingListContent() {
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 될 패키지 목록</th>
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키지 내 상품 목록</th>
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">보관 장소</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">관리자 기록</th>
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">수량</th>
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 요청 일시</th>
                   <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">관리자 메모</th>
@@ -205,28 +193,37 @@ export function PackagingListContent() {
                         {item.packagingOption}
                       </Badge>
                     </td>
-                    <td className="px-3 py-3 text-body-regular-sm text-fg-default max-w-[180px]">
+                    <td className="px-3 py-3 text-body-regular-sm text-fg-default max-w-[200px]">
                       {item.packageList.map((pkg, i) => (
                         <div key={i} className="text-fg-subtle text-label-sm">{pkg}</div>
                       ))}
+                      {item.userNote && (
+                        <div className="text-fg-accent-brand2-default text-label-sm mt-1">- 유저 요청사항: {item.userNote}</div>
+                      )}
                     </td>
-                    <td className="px-3 py-3 text-body-regular-sm text-fg-default max-w-[200px]">
+                    <td className="px-3 py-3 text-body-regular-sm text-fg-default max-w-[220px]">
                       {item.productList.map((prod, i) => (
-                        <div key={i} className="text-label-sm">
-                          <span className="text-fg-default">• {prod.name}</span>
-                          <span className="text-fg-subtle"> / {prod.qty}개</span>
+                        <div key={i} className="text-label-sm flex gap-1">
+                          <span className={prod.isPob ? 'text-fg-subtle' : 'text-fg-default'}>• {prod.name}</span>
+                          <span className={prod.isPob ? 'text-fg-accent-brand1-default' : 'text-fg-accent-brand2-default'}>/ {prod.qty}개</span>
                         </div>
                       ))}
                     </td>
                     <td className="px-3 py-3 text-body-regular-sm text-fg-default font-mono whitespace-nowrap">
                       {item.storageLocation}
                     </td>
-                    <td className="px-3 py-3 text-body-regular-sm text-fg-default text-right">
-                      {item.quantity}
+                    <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[180px]">
+                      {item.adminRecord || '-'}
+                    </td>
+                    <td className="px-3 py-3 text-body-regular-sm whitespace-nowrap">
+                      <div className="text-label-sm text-fg-subtle">총 패키지 수</div>
+                      <div className="text-fg-accent-brand1-default text-label-bold-sm">{item.packageList.length}개</div>
+                      <div className="text-label-sm text-fg-subtle mt-1">총 상품 수량</div>
+                      <div className="text-fg-accent-brand1-default text-label-bold-sm">{item.productList.reduce((s, p) => s + p.qty, 0)}개</div>
                     </td>
                     <td className="px-3 py-3 text-body-regular-sm text-fg-default whitespace-nowrap">
                       <div>{item.requestedAt}</div>
-                      <div className="text-fg-subtle">{item.daysSince}</div>
+                      <div className="text-fg-accent-brand1-default">{item.daysSince}</div>
                     </td>
                     <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[160px] truncate">
                       {item.adminMemo || '-'}
@@ -235,7 +232,7 @@ export function PackagingListContent() {
                 ))}
                 {items.length === 0 && (
                   <tr>
-                    <td colSpan={11} className="px-4 py-12 text-center text-fg-subtle text-body-regular-md">
+                    <td colSpan={12} className="px-4 py-12 text-center text-fg-subtle text-body-regular-md">
                       해당 상태의 패키징 항목이 없습니다.
                     </td>
                   </tr>
