@@ -133,36 +133,43 @@ export function PackagingListContent() {
       <div className="flex-1 px-6 py-5 space-y-4">
         {/* Search panel */}
         <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
+          {/* Header — min-h-[56px] per Figma */}
           <div
-            className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+            className="flex items-center justify-between px-4 py-[12px] min-h-[56px] cursor-pointer select-none border-b border-border-default"
             onClick={() => setSearchOpen(v => !v)}
           >
-            <span className="text-body-bold-md text-fg-default">검색</span>
+            <span className="text-[18px] font-bold leading-7 text-fg-default tracking-tight">검색</span>
             <svg
-              width="20" height="20" viewBox="0 0 20 20" fill="none"
+              width="24" height="24" viewBox="0 0 24 24" fill="none"
               className={cn('text-fg-subtle transition-transform', searchOpen ? 'rotate-180' : '')}
             >
-              <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           {searchOpen && (
-            <div className="px-4 pb-4">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-label-md text-fg-default whitespace-nowrap w-16 shrink-0">검색어</span>
-                <input
-                  className="flex-1 h-10 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
-                  placeholder="패키지 요청번호, 패키지 번호 등을 입력하세요"
-                />
+            <>
+              {/* Body — row h-[56px], label cell w-[120px] */}
+              <div className="flex h-[56px] items-stretch">
+                <div className="flex items-center w-[120px] shrink-0 px-4 py-2">
+                  <span className="text-[14px] font-semibold text-fg-default leading-5 tracking-tight">검색어</span>
+                </div>
+                <div className="flex flex-1 items-center px-4 py-2">
+                  <input
+                    className="w-full h-[40px] px-4 rounded-lg border border-border-default text-[16px] bg-bg-subtle text-fg-default placeholder:text-fg-subtle focus:outline-none focus:border-border-inverse-subtle leading-6"
+                    placeholder="판매처 주문번호, 패키지 번호 등을 입력해주세요."
+                  />
+                </div>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button size="md" variant="outline" color="default">검색 초기화</Button>
-                <Button size="md" color="brand1" leftIcon={
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+              {/* Footer buttons */}
+              <div className="flex justify-end gap-3 px-4 py-[12px] border-t border-border-default">
+                <Button size="lg" variant="outline" color="default">검색 초기화</Button>
+                <Button size="lg" variant="outline" color="default" leftIcon={
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 }>조회하기</Button>
               </div>
-            </div>
+            </>
           )}
         </div>
 
@@ -171,7 +178,7 @@ export function PackagingListContent() {
           {/* Toolbar row 1 */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
             <div className="flex items-center gap-3">
-              <span className="text-body-bold-md text-fg-default">
+              <span className="text-[18px] font-bold leading-7 text-fg-default tracking-tight">
                 <span className="text-fg-accent-brand1-default">{allRequests.length}</span>
                 개의 {tabs.find(t => t.id === activeTab)?.label} 목록
               </span>
