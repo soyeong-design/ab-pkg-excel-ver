@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import { CancelPackagingDialog } from '@/components/admin/dialogs/CancelPackagingDialog'
 import { MOCK_PACKAGING_REQUESTS, type PackagingRequest } from '@/lib/mockData'
@@ -70,6 +69,7 @@ export function PackagingListContent() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [cancelTarget, setCancelTarget] = useState<PackagingRequest | null>(null)
   const [cancelledIds, setCancelledIds] = useState<Set<string>>(new Set())
+  const [searchOpen, setSearchOpen] = useState(true)
 
   const allRequests = MOCK_PACKAGING_REQUESTS.filter(
     r => r.status === activeTab && !cancelledIds.has(r.requestId)
@@ -94,14 +94,7 @@ export function PackagingListContent() {
 
   const allChecked = allRequests.length > 0 && selectedIds.size === allRequests.length
   const hasSelection = selectedIds.size > 0
-
   const selectedRequests = allRequests.filter(r => selectedIds.has(r.requestId))
-
-  const optionBadgeColor = (opt: string) => {
-    if (opt === '합포장') return 'brand1'
-    if (opt === 'POB만') return 'brand2'
-    return 'gray'
-  }
 
   return (
     <>
@@ -139,24 +132,38 @@ export function PackagingListContent() {
 
       <div className="flex-1 px-6 py-5 space-y-4">
         {/* Search panel */}
-        <div className="bg-bg-default rounded-xl border border-border-default p-4">
-          <div className="flex items-center justify-between mb-3">
+        <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
+          <div
+            className="flex items-center justify-between px-4 py-3 cursor-pointer select-none"
+            onClick={() => setSearchOpen(v => !v)}
+          >
             <span className="text-body-bold-md text-fg-default">검색</span>
+            <svg
+              width="20" height="20" viewBox="0 0 20 20" fill="none"
+              className={cn('text-fg-subtle transition-transform', searchOpen ? 'rotate-180' : '')}
+            >
+              <path d="M5 7.5l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </div>
-          <div className="w-full">
-            <input
-              className="w-full h-10 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
-              placeholder="패키징 요청 ID, 유저 ID, 패키지 번호 등을 입력하세요"
-            />
-          </div>
-          <div className="flex justify-end gap-2 mt-3">
-            <Button size="md" variant="outline" color="default">검색 초기화</Button>
-            <Button size="md" color="brand1" leftIcon={
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            }>조회하기</Button>
-          </div>
+          {searchOpen && (
+            <div className="px-4 pb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-label-md text-fg-default whitespace-nowrap w-16 shrink-0">검색어</span>
+                <input
+                  className="flex-1 h-10 px-3 rounded-lg border border-border-default text-body-regular-md bg-bg-default text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-inverse-subtle"
+                  placeholder="패키지 요청번호, 패키지 번호 등을 입력하세요"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button size="md" variant="outline" color="default">검색 초기화</Button>
+                <Button size="md" color="brand1" leftIcon={
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                    <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                }>조회하기</Button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Table panel */}
@@ -165,7 +172,8 @@ export function PackagingListContent() {
           <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
             <div className="flex items-center gap-3">
               <span className="text-body-bold-md text-fg-default">
-                {allRequests.length}개의 {tabs.find(t => t.id === activeTab)?.label} 목록
+                <span className="text-fg-accent-brand1-default">{allRequests.length}</span>
+                개의 {tabs.find(t => t.id === activeTab)?.label} 목록
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -179,7 +187,7 @@ export function PackagingListContent() {
               >
                 패키징 요청 취소
               </Button>
-              <Button size="sm" variant="outline" color="brand1" isDisabled={!hasSelection}>
+              <Button size="sm" variant="outline" color="red" isDisabled={!hasSelection}>
                 패키징 보류
               </Button>
               <Button size="sm" color="brand1" isDisabled={!hasSelection}>
@@ -207,7 +215,7 @@ export function PackagingListContent() {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-border-default bg-bg-subtle">
-                  <th className="w-10 px-4 py-3">
+                  <th className="w-10 px-4 py-3 text-center">
                     <input
                       type="checkbox"
                       checked={allChecked}
@@ -215,17 +223,17 @@ export function PackagingListContent() {
                       className="w-4 h-4 rounded accent-pink-500"
                     />
                   </th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 요청 ID</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">유저 ID</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키지 번호</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 옵션</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 될 패키지 목록</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키지 내 상품 목록</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">보관 장소</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">관리자 기록</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">수량</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">패키징 요청 일시</th>
-                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap">관리자 메모</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키징 요청 ID</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">유저 ID</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키지 번호</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키징 옵션</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키징 될 패키지 목록</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키지 내 상품 목록</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">보관 장소</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">관리자 기록</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">수량</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">패키징 요청 일시</th>
+                  <th className="px-3 py-3 text-label-bold-sm text-fg-subtle whitespace-nowrap text-center">관리자 메모</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,7 +260,7 @@ export function PackagingListContent() {
                         {/* Rowspan cells — only on first sub-row */}
                         {isFirst && (
                           <>
-                            <td rowSpan={pkgCount} className="px-4 py-3 align-top border-r border-border-default">
+                            <td rowSpan={pkgCount} className="px-4 py-3 align-top border-r border-border-default text-center">
                               <input
                                 type="checkbox"
                                 checked={isSelected}
@@ -260,7 +268,7 @@ export function PackagingListContent() {
                                 className="w-4 h-4 rounded accent-pink-500"
                               />
                             </td>
-                            <td rowSpan={pkgCount} className="px-3 py-3 align-top text-body-regular-sm border-r border-border-default">
+                            <td rowSpan={pkgCount} className="px-3 py-3 align-top text-body-regular-sm border-r border-border-default min-w-[128px]">
                               <Link
                                 href={`/packaging/${req.requestId}`}
                                 className="text-fg-accent-brand1-default hover:underline font-mono text-xs"
@@ -268,48 +276,60 @@ export function PackagingListContent() {
                                 {req.requestId}
                               </Link>
                             </td>
-                            <td rowSpan={pkgCount} className="px-3 py-3 align-top text-body-regular-sm text-fg-default border-r border-border-default max-w-[120px]">
-                              <div className="break-all">{req.userId}</div>
+                            <td rowSpan={pkgCount} className="px-3 py-3 align-top text-body-regular-sm text-fg-default border-r border-border-default max-w-[160px]">
+                              <div className="break-all text-xs">{req.userId}</div>
+                            </td>
+                            <td rowSpan={pkgCount} className="px-3 py-3 align-top border-r border-border-default min-w-[140px]">
+                              <div className="font-mono text-xs text-fg-default">{req.packageNumber}</div>
+                              <div className="text-fg-subtle text-label-sm">({req.packageNumberAlias})</div>
                             </td>
                           </>
                         )}
 
-                        {/* Per-package cells */}
-                        <td className="px-3 py-3 text-body-regular-sm text-fg-default whitespace-nowrap">
-                          <div className="font-mono text-xs">{pkg.packageCode}</div>
-                          <div className="text-fg-subtle text-label-sm">({pkg.packageAlias})</div>
-                        </td>
-                        <td className="px-3 py-3">
-                          <Badge size="sm" color={optionBadgeColor(pkg.packagingOption) as 'brand1' | 'brand2' | 'gray'}>
-                            {pkg.packagingOption}
-                          </Badge>
-                        </td>
-                        <td className="px-3 py-3 text-body-regular-sm max-w-[180px]">
+                        {/* 패키징 옵션 — option text + packageList details + userNote */}
+                        <td className="px-3 py-3 text-body-regular-sm min-w-[180px]">
+                          <div className="text-label-bold-sm text-fg-default">{pkg.packagingOption}</div>
                           {pkg.packageList.map((p, i) => (
-                            <div key={i} className="text-fg-subtle text-label-sm">{p}</div>
+                            <div key={i} className="text-[12px] text-fg-subtle leading-4">{p}</div>
                           ))}
                           {pkg.userNote && (
-                            <div className="text-fg-accent-brand2-default text-label-sm mt-1">
-                              - 유저 요청사항: {pkg.userNote}
+                            <div className="text-[12px] text-fg-accent-brand1-default leading-4 mt-0.5">
+                              <span className="font-semibold">- 유저 요청사항: </span>
+                              <span>{pkg.userNote}</span>
                             </div>
                           )}
                         </td>
-                        <td className="px-3 py-3 text-body-regular-sm max-w-[220px]">
+
+                        {/* 패키징 될 패키지 목록 — individual package code per sub-row */}
+                        <td className="px-3 py-3 text-body-regular-sm min-w-[152px]">
+                          <div className="font-mono text-xs text-fg-default">{pkg.packageCode}</div>
+                          <div className="text-fg-subtle text-label-sm">({pkg.packageAlias})</div>
+                        </td>
+
+                        {/* 패키지 내 상품 목록 */}
+                        <td className="px-3 py-3 text-body-regular-sm min-w-[280px]">
                           {pkg.productList.map((prod, i) => (
-                            <div key={i} className="text-label-sm flex gap-1">
-                              <span className={prod.isPob ? 'text-fg-subtle' : 'text-fg-default'}>
-                                • {prod.name}
+                            <div key={i} className="flex gap-1 items-baseline text-[13px] leading-5">
+                              <span className={cn(
+                                'flex-1 min-w-0',
+                                prod.isPob ? 'text-fg-subtle' : 'text-fg-default',
+                              )}>
+                                {prod.isPob ? '-' : '•'} {prod.name}
                               </span>
-                              <span className={prod.isPob ? 'text-fg-accent-brand1-default' : 'text-fg-accent-brand2-default'}>
+                              <span className="text-fg-accent-brand1-default shrink-0 whitespace-nowrap">
                                 / {prod.qty}개
                               </span>
                             </div>
                           ))}
                         </td>
-                        <td className="px-3 py-3 text-body-regular-sm text-fg-default font-mono whitespace-nowrap text-xs">
+
+                        {/* 보관 장소 */}
+                        <td className="px-3 py-3 text-body-regular-sm text-fg-default whitespace-nowrap text-xs">
                           {pkg.storageLocation}
                         </td>
-                        <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[160px]">
+
+                        {/* 관리자 기록 */}
+                        <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[150px] text-xs">
                           {pkg.adminRecord || '-'}
                         </td>
 
@@ -318,15 +338,16 @@ export function PackagingListContent() {
                           <>
                             <td className="px-3 py-3 text-body-regular-sm whitespace-nowrap">
                               <div className="text-label-sm text-fg-subtle">총 패키지 수</div>
-                              <div className="text-fg-accent-brand1-default text-label-bold-sm">{pkgCount}개</div>
+                              <div className="text-fg-accent-brand1-default text-label-bold-sm">
+                                {pkgCount}개 {req.daysSince}
+                              </div>
                               <div className="text-label-sm text-fg-subtle mt-1">총 상품 수량</div>
                               <div className="text-fg-accent-brand1-default text-label-bold-sm">{totalQty}개</div>
                             </td>
                             <td className="px-3 py-3 text-body-regular-sm whitespace-nowrap">
                               <div className="text-fg-default">{req.requestedAt}</div>
-                              <div className="text-fg-accent-brand1-default">{req.daysSince}</div>
                             </td>
-                            <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[160px]">
+                            <td className="px-3 py-3 text-body-regular-sm text-fg-subtle max-w-[150px] text-xs">
                               {req.adminMemo || '-'}
                             </td>
                           </>

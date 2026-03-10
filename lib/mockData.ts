@@ -41,6 +41,8 @@ export interface SubPackage {
 export interface PackagingRequest {
   requestId: string
   userId: string
+  packageNumber: string
+  packageNumberAlias: string
   packages: SubPackage[]
   requestedAt: string
   daysSince: string
@@ -52,6 +54,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000105',
     userId: 'gaellealienordalpos',
+    packageNumber: 'yTgP27Oc9Q',
+    packageNumberAlias: '잉어7314',
     packages: [
       {
         packageCode: 'xFWIcTLtkc',
@@ -101,6 +105,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000106',
     userId: 'gaellealienordalpos',
+    packageNumber: 'x3outluhFQ',
+    packageNumberAlias: '잉어2276',
     packages: [
       {
         packageCode: 'x3Vv9sYvqY',
@@ -153,6 +159,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000107',
     userId: 'gaellealienordalpos',
+    packageNumber: 'w4UipEnPE3',
+    packageNumberAlias: '잉어5719',
     packages: [
       {
         packageCode: 'w4UipEnPE3',
@@ -189,6 +197,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000108',
     userId: 'gaellealienordalpos',
+    packageNumber: 'xMajOvcGXb',
+    packageNumberAlias: '가재3469',
     packages: [
       {
         packageCode: 'xMajOvcGXb',
@@ -226,6 +236,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000109',
     userId: 'gaellealienordalpos',
+    packageNumber: 'xMajOvcGXb',
+    packageNumberAlias: '잉어3469',
     packages: [
       {
         packageCode: 'xMajOvcGXb',
@@ -260,6 +272,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000110',
     userId: 'gaellealienordalpos',
+    packageNumber: 'zRqTm18kXa',
+    packageNumberAlias: '잉어5512',
     packages: [
       {
         packageCode: 'zRqTm18kXa',
@@ -283,6 +297,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000101',
     userId: 'completedUser01',
+    packageNumber: 'cPkgAbc123',
+    packageNumberAlias: '목련1001',
     packages: [
       {
         packageCode: 'cPkgAbc123',
@@ -303,6 +319,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000102',
     userId: 'heldUser01',
+    packageNumber: 'hPkgXyz789',
+    packageNumberAlias: '잉어2222',
     packages: [
       {
         packageCode: 'hPkgXyz789',
