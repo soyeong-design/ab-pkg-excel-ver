@@ -61,6 +61,8 @@ ${xmlRows}
   URL.revokeObjectURL(url)
 }
 
+const PAGE_SIZE = 10
+
 export function PackagingListContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -70,13 +72,17 @@ export function PackagingListContent() {
   const [cancelTarget, setCancelTarget] = useState<PackagingRequest | null>(null)
   const [cancelledIds, setCancelledIds] = useState<Set<string>>(new Set())
   const [searchOpen, setSearchOpen] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const allRequests = MOCK_PACKAGING_REQUESTS.filter(
     r => r.status === activeTab && !cancelledIds.has(r.requestId)
   )
 
+  const totalPages = Math.max(1, Math.ceil(allRequests.length / PAGE_SIZE))
+  const pagedRequests = allRequests.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   function toggleAll(checked: boolean) {
-    setSelectedIds(checked ? new Set(allRequests.map(r => r.requestId)) : new Set())
+    setSelectedIds(checked ? new Set(pagedRequests.map(r => r.requestId)) : new Set())
   }
 
   function toggleOne(id: string) {
@@ -89,10 +95,29 @@ export function PackagingListContent() {
 
   function handleTabChange(tab: Tab) {
     setSelectedIds(new Set())
+    setCurrentPage(1)
     router.push(`/packaging?tab=${tab}`)
   }
 
-  const allChecked = allRequests.length > 0 && selectedIds.size === allRequests.length
+  function goToPage(page: number) {
+    setCurrentPage(page)
+    setSelectedIds(new Set())
+  }
+
+  // Page number list: always show first/last + neighbors of current
+  function getPageNumbers(): (number | '...')[] {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
+    const pages: (number | '...')[] = [1]
+    if (currentPage > 3) pages.push('...')
+    for (let p = Math.max(2, currentPage - 1); p <= Math.min(totalPages - 1, currentPage + 1); p++) {
+      pages.push(p)
+    }
+    if (currentPage < totalPages - 2) pages.push('...')
+    pages.push(totalPages)
+    return pages
+  }
+
+  const allChecked = pagedRequests.length > 0 && pagedRequests.every(r => selectedIds.has(r.requestId))
   const hasSelection = selectedIds.size > 0
   const selectedRequests = allRequests.filter(r => selectedIds.has(r.requestId))
 
@@ -244,7 +269,7 @@ export function PackagingListContent() {
                 </tr>
               </thead>
               <tbody>
-                {allRequests.map(req => {
+                {pagedRequests.map(req => {
                   const isSelected = selectedIds.has(req.requestId)
                   const pkgCount = req.packages.length
                   const totalQty = req.packages.reduce(
@@ -370,7 +395,7 @@ export function PackagingListContent() {
                   })
                 })}
 
-                {allRequests.length === 0 && (
+                {pagedRequests.length === 0 && (
                   <tr>
                     <td colSpan={12} className="px-4 py-12 text-center text-fg-subtle text-body-regular-md">
                       해당 상태의 패키징 항목이 없습니다.
@@ -384,20 +409,45 @@ export function PackagingListContent() {
           {/* Pagination */}
           <div className="flex items-center justify-between px-4 py-3 border-t border-border-default">
             <div className="flex items-center gap-2">
-              <select className="h-8 px-2 rounded-lg border border-border-default text-label-md bg-bg-default text-fg-default">
+              <select className="h-9 px-3 rounded-lg border border-border-default text-[14px] bg-bg-default text-fg-default focus:outline-none">
                 <option>10 / page</option>
                 <option>20 / page</option>
                 <option>50 / page</option>
               </select>
             </div>
             <div className="flex items-center gap-1">
-              <Button size="sm" variant="outline" color="default">← Previous</Button>
-              {[1, 2, 3, 4, 5].map(n => (
-                <Button key={n} size="sm" variant={n === 1 ? 'solid' : 'outline'} color={n === 1 ? 'brand1' : 'default'}>
-                  {n}
-                </Button>
-              ))}
-              <Button size="sm" variant="outline" color="default">Next →</Button>
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="h-9 px-3 rounded-lg border border-border-default text-[14px] text-fg-default disabled:text-fg-disabled disabled:border-border-disabled hover:bg-bg-subtle transition-colors"
+              >
+                ← Previous
+              </button>
+              {getPageNumbers().map((p, i) =>
+                p === '...'
+                  ? <span key={`ellipsis-${i}`} className="px-2 text-fg-subtle text-[14px]">…</span>
+                  : (
+                    <button
+                      key={p}
+                      onClick={() => goToPage(p as number)}
+                      className={cn(
+                        'h-9 w-9 rounded-lg border text-[14px] font-semibold transition-colors',
+                        currentPage === p
+                          ? 'bg-bg-accent-brand1-default border-bg-accent-brand1-default text-fg-inverse-default'
+                          : 'border-border-default text-fg-default hover:bg-bg-subtle',
+                      )}
+                    >
+                      {p}
+                    </button>
+                  )
+              )}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="h-9 px-3 rounded-lg border border-border-default text-[14px] text-fg-default disabled:text-fg-disabled disabled:border-border-disabled hover:bg-bg-subtle transition-colors"
+              >
+                Next →
+              </button>
             </div>
           </div>
         </div>
