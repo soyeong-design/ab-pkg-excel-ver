@@ -71,7 +71,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'xeKSHrJgyi',
-        packageAlias: '잉어4102',
+        packageAlias: '가재4102',
         packagingOption: '합포장',
         packageList: ['전체 (앨범, 포스터, 포토북 제외)'],
         productList: [
@@ -85,7 +85,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'w4UipEnPE3',
-        packageAlias: '잉어3551',
+        packageAlias: '새3551',
         packagingOption: '구성품만',
         packageList: ['구성품만', '전체 (앨범, 포스터, 포토북 제외)'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
@@ -111,7 +111,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     packages: [
       {
         packageCode: 'x3Vv9sYvqY',
-        packageAlias: '잉어4102',
+        packageAlias: '목련4891',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -139,8 +139,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         adminRecord: '배송 대행 주문 :UUxNSA & 255738076974 포카앨범 12EA(사인앨범 1EA 포함), 포토카드 13EA',
       },
       {
-        packageCode: 'w4UipEnPE3',
-        packageAlias: '잉어1382',
+        packageCode: 'm4UipEnRQ7',
+        packageAlias: '봄1382',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -160,12 +160,12 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000107',
     userId: 'gaellealienordalpos',
-    packageNumber: 'w4UipEnPE3',
-    packageNumberAlias: '잉어5719',
+    packageNumber: 'k7JpvBnX2L',
+    packageNumberAlias: '가재5719',
     packages: [
       {
-        packageCode: 'w4UipEnPE3',
-        packageAlias: '잉어5719',
+        packageCode: 'k7JpvBnX2L',
+        packageAlias: '가재5719',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -177,8 +177,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         adminRecord: '배송 대행 주문 :UUxNSA & 511201386616 / CD앨범 5EA, 특전포카 6EA',
       },
       {
-        packageCode: 'w4UipEnPE3',
-        packageAlias: '잉어1715',
+        packageCode: 'm9QrTwYz3P',
+        packageAlias: '봄1715',
         packagingOption: 'POB만',
         packageList: ['POB만'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
@@ -216,7 +216,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'tpAWEvfbmo',
-        packageAlias: '가재1044',
+        packageAlias: '봄1044',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -236,11 +236,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000109',
     userId: 'gaellealienordalpos',
-    packageNumber: 'xMajOvcGXb',
+    packageNumber: 'n8pLsKtRwM',
     packageNumberAlias: '잉어3469',
     packages: [
       {
-        packageCode: 'xMajOvcGXb',
+        packageCode: 'n8pLsKtRwM',
         packageAlias: '잉어3469',
         packagingOption: '합포장',
         packageList: ['합포장'],
@@ -253,7 +253,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'x5SaIc8wAM',
-        packageAlias: '잠미3333',
+        packageAlias: '새1927',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -313,7 +313,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'rTuVwX1YzA',
-        packageAlias: '새2193',
+        packageAlias: '잉어2193',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -375,7 +375,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'vWxYzAbCdE',
-        packageAlias: '가재5501',
+        packageAlias: '봄5501',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -465,7 +465,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'jKlMnOpQrS',
-        packageAlias: '잉어6613',
+        packageAlias: '가재6613',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -526,7 +526,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'nOpQrStUvW',
-        packageAlias: '봄2235',
+        packageAlias: '새2235',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -614,7 +614,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'bCdEfGhIjL',
-        packageAlias: '가재1156',
+        packageAlias: '목련1156',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -776,7 +776,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'uVwXyZaBcD',
-        packageAlias: '새3302',
+        packageAlias: '잉어3302',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [

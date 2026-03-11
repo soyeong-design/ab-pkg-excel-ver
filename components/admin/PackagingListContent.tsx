@@ -229,17 +229,17 @@ export function PackagingListContent() {
           </div>
 
           {/* Toolbar row 2 */}
-          <div className="flex items-center justify-end gap-2 px-4 py-2 border-b border-border-default bg-bg-subtle">
+          <div className="flex items-center justify-end gap-2 px-4 py-3 border-b border-border-default">
             <Button
-              size="sm" variant="outline" color="default"
+              size="md" variant="outline" color="default"
               onClick={() => hasSelection && downloadExcel(selectedRequests)}
               isDisabled={!hasSelection}
             >
               패키징 라벨 다운받기
             </Button>
-            <Button size="sm" variant="outline" color="default">폐기 라벨 다운받기</Button>
-            <Button size="sm" variant="outline" color="default">피킹 리스트 다운받기</Button>
-            <Button size="sm" variant="outline" color="default">패키징 지시서 다운받기</Button>
+            <Button size="md" variant="outline" color="default">폐기 라벨 다운받기</Button>
+            <Button size="md" variant="outline" color="default">피킹 리스트 다운받기</Button>
+            <Button size="md" variant="outline" color="default">패키징 지시서 다운받기</Button>
           </div>
 
           {/* Table */}
@@ -407,48 +407,64 @@ export function PackagingListContent() {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between px-4 py-3 border-t border-border-default">
-            <div className="flex items-center gap-2">
-              <select className="h-9 px-3 rounded-lg border border-border-default text-[14px] bg-bg-default text-fg-default focus:outline-none">
-                <option>10 / page</option>
-                <option>20 / page</option>
-                <option>50 / page</option>
-              </select>
+          <div className="flex items-center justify-between px-6 pt-3 pb-4 border-t border-border-default">
+            {/* Previous */}
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="flex items-center gap-1 px-6 py-2 bg-white border border-[#dee2e6] rounded-[6px] text-[14px] font-semibold text-[#212529] tracking-[-0.3px] disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Previous
+            </button>
+
+            {/* Center: page size dropdown + page numbers */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 px-6 py-2 bg-white border border-[#dee2e6] rounded-[6px] text-[14px] text-[#212529] tracking-[-0.3px] cursor-pointer select-none">
+                <span>10 / page</span>
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className="flex items-center gap-0.5">
+                {getPageNumbers().map((p, i) =>
+                  p === '...'
+                    ? (
+                      <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-[14px] text-[#868e96] tracking-[-0.3px]">
+                        ...
+                      </span>
+                    )
+                    : (
+                      <button
+                        key={p}
+                        onClick={() => goToPage(p as number)}
+                        className={cn(
+                          'w-10 h-10 flex items-center justify-center rounded-full text-[14px] tracking-[-0.3px] transition-colors',
+                          currentPage === p
+                            ? 'bg-[rgba(0,0,0,0.12)] text-[#212529] font-semibold'
+                            : 'text-[#868e96] font-normal hover:bg-[rgba(0,0,0,0.06)]',
+                        )}
+                      >
+                        {p}
+                      </button>
+                    )
+                )}
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => goToPage(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="h-9 px-3 rounded-lg border border-border-default text-[14px] text-fg-default disabled:text-fg-disabled disabled:border-border-disabled hover:bg-bg-subtle transition-colors"
-              >
-                ← Previous
-              </button>
-              {getPageNumbers().map((p, i) =>
-                p === '...'
-                  ? <span key={`ellipsis-${i}`} className="px-2 text-fg-subtle text-[14px]">…</span>
-                  : (
-                    <button
-                      key={p}
-                      onClick={() => goToPage(p as number)}
-                      className={cn(
-                        'h-9 w-9 rounded-lg border text-[14px] font-semibold transition-colors',
-                        currentPage === p
-                          ? 'bg-bg-accent-brand1-default border-bg-accent-brand1-default text-fg-inverse-default'
-                          : 'border-border-default text-fg-default hover:bg-bg-subtle',
-                      )}
-                    >
-                      {p}
-                    </button>
-                  )
-              )}
-              <button
-                onClick={() => goToPage(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="h-9 px-3 rounded-lg border border-border-default text-[14px] text-fg-default disabled:text-fg-disabled disabled:border-border-disabled hover:bg-bg-subtle transition-colors"
-              >
-                Next →
-              </button>
-            </div>
+
+            {/* Next */}
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-1 px-6 py-2 bg-white border border-[#dee2e6] rounded-[6px] text-[14px] font-semibold text-[#212529] tracking-[-0.3px] disabled:opacity-40 hover:bg-gray-50 transition-colors"
+            >
+              Next
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M7.5 5L12.5 10L7.5 15" stroke="currentColor" strokeWidth="1.67" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
