@@ -56,11 +56,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000105',
     userId: 'taroseok0319',
     packageNumber: 'yTgP27Oc9Q',
-    packageNumberAlias: '잉어7314',
+    packageNumberAlias: '눈꽃7314',
     packages: [
       {
         packageCode: 'xFWIcTLtkc',
-        packageAlias: '잉어320',
+        packageAlias: '눈꽃320',
         packagingOption: '합포장',
         packageList: ['구성품만'],
         productList: [
@@ -71,7 +71,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'xeKSHrJgyi',
-        packageAlias: '가재4102',
+        packageAlias: '눈꽃4102',
         packagingOption: '합포장',
         packageList: ['전체 (앨범, 포스터, 포토북 제외)'],
         productList: [
@@ -85,7 +85,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'w4UipEnPE3',
-        packageAlias: '새3551',
+        packageAlias: '눈꽃3551',
         packagingOption: '구성품만',
         packageList: ['구성품만', '전체 (앨범, 포스터, 포토북 제외)'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
@@ -107,11 +107,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000106',
     userId: 'skyleralee90',
     packageNumber: 'x3outluhFQ',
-    packageNumberAlias: '잉어2276',
+    packageNumberAlias: '사슴벌레2276',
     packages: [
       {
         packageCode: 'x3Vv9sYvqY',
-        packageAlias: '목련4891',
+        packageAlias: '사슴벌레4891',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -125,7 +125,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'x3outluhFQ',
-        packageAlias: '잉어2276',
+        packageAlias: '사슴벌레2276',
         packagingOption: '구성품만',
         packageList: ['구성품만', 'POB만'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
@@ -140,7 +140,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'm4UipEnRQ7',
-        packageAlias: '봄1382',
+        packageAlias: '사슴벌레1382',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -161,11 +161,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000107',
     userId: 'IZ0gEBbSzUdD4EktJyrgfspl',
     packageNumber: 'k7JpvBnX2L',
-    packageNumberAlias: '가재5719',
+    packageNumberAlias: '문어5719',
     packages: [
       {
         packageCode: 'k7JpvBnX2L',
-        packageAlias: '가재5719',
+        packageAlias: '문어5719',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -178,7 +178,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'm9QrTwYz3P',
-        packageAlias: '봄1715',
+        packageAlias: '문어1715',
         packagingOption: 'POB만',
         packageList: ['POB만'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
@@ -199,11 +199,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000108',
     userId: 'dana.al.baaj',
     packageNumber: 'xMajOvcGXb',
-    packageNumberAlias: '가재3469',
+    packageNumberAlias: '아기토끼3469',
     packages: [
       {
         packageCode: 'xMajOvcGXb',
-        packageAlias: '가재3469',
+        packageAlias: '아기토끼3469',
         packagingOption: '구성품만',
         packageList: ['구성품만', '전체 (앨범, 포스터, 포토북 제외)'],
         userNote: '주소 수정 완료, 확인 후 처리 바랍니다.',
@@ -216,7 +216,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'tpAWEvfbmo',
-        packageAlias: '봄1044',
+        packageAlias: '아기토끼1044',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -237,11 +237,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000109',
     userId: 'jessi-h.mail',
     packageNumber: 'n8pLsKtRwM',
-    packageNumberAlias: '잉어3469',
+    packageNumberAlias: '노을3469',
     packages: [
       {
         packageCode: 'n8pLsKtRwM',
-        packageAlias: '잉어3469',
+        packageAlias: '노을3469',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -253,7 +253,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'x5SaIc8wAM',
-        packageAlias: '새1927',
+        packageAlias: '노을1927',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -296,11 +296,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000112',
     userId: 'starlight_moon99',
     packageNumber: 'mPqLs9XwRt',
-    packageNumberAlias: '새1847',
+    packageNumberAlias: '달빛1847',
     packages: [
       {
         packageCode: 'mPqLs9XwRt',
-        packageAlias: '새1847',
+        packageAlias: '달빛1847',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -313,7 +313,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'rTuVwX1YzA',
-        packageAlias: '잉어2193',
+        packageAlias: '달빛2193',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -358,11 +358,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000114',
     userId: 'jisoo_fanclub',
     packageNumber: 'lMnOpQrStU',
-    packageNumberAlias: '가재5500',
+    packageNumberAlias: '벚꽃5500',
     packages: [
       {
         packageCode: 'lMnOpQrStU',
-        packageAlias: '가재5500',
+        packageAlias: '벚꽃5500',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -375,7 +375,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'vWxYzAbCdE',
-        packageAlias: '봄5501',
+        packageAlias: '벚꽃5501',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -447,11 +447,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000117',
     userId: 'night_kpop_shop',
     packageNumber: 'zAbCdEfGhI',
-    packageNumberAlias: '잉어6612',
+    packageNumberAlias: '은하6612',
     packages: [
       {
         packageCode: 'zAbCdEfGhI',
-        packageAlias: '잉어6612',
+        packageAlias: '은하6612',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         userNote: '사인앨범 별도 포장 부탁드립니다.',
@@ -465,7 +465,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'jKlMnOpQrS',
-        packageAlias: '가재6613',
+        packageAlias: '은하6613',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -509,11 +509,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000119',
     userId: 'ocean_wave_merch',
     packageNumber: 'dEfGhIjKlM',
-    packageNumberAlias: '봄2234',
+    packageNumberAlias: '파도2234',
     packages: [
       {
         packageCode: 'dEfGhIjKlM',
-        packageAlias: '봄2234',
+        packageAlias: '파도2234',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -526,7 +526,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'nOpQrStUvW',
-        packageAlias: '새2235',
+        packageAlias: '파도2235',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -597,11 +597,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000122',
     userId: 'aurora_kpop',
     packageNumber: 'rStUvWxYzA',
-    packageNumberAlias: '가재1155',
+    packageNumberAlias: '오로라1155',
     packages: [
       {
         packageCode: 'rStUvWxYzA',
-        packageAlias: '가재1155',
+        packageAlias: '오로라1155',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -614,7 +614,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'bCdEfGhIjL',
-        packageAlias: '목련1156',
+        packageAlias: '오로라1156',
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
@@ -760,11 +760,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000128',
     userId: 'dream_kpop_store',
     packageNumber: 'kLmNoPqRsT',
-    packageNumberAlias: '새3301',
+    packageNumberAlias: '꿈3301',
     packages: [
       {
         packageCode: 'kLmNoPqRsT',
-        packageAlias: '새3301',
+        packageAlias: '꿈3301',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -776,7 +776,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'uVwXyZaBcD',
-        packageAlias: '잉어3302',
+        packageAlias: '꿈3302',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -871,11 +871,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000110',
     userId: 'wRGls45oiZRKoABlkmTClX',
     packageNumber: 'zRqTm18kXa',
-    packageNumberAlias: '잉어5512',
+    packageNumberAlias: '참치5512',
     packages: [
       {
         packageCode: 'zRqTm18kXa',
-        packageAlias: '잉어5512',
+        packageAlias: '참치5512',
         packagingOption: '합포장',
         packageList: ['전체'],
         productList: [
@@ -916,11 +916,11 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     requestId: '2601121705000102',
     userId: 'heldUser01',
     packageNumber: 'hPkgXyz789',
-    packageNumberAlias: '잉어2222',
+    packageNumberAlias: '고래2222',
     packages: [
       {
         packageCode: 'hPkgXyz789',
-        packageAlias: '잉어2222',
+        packageAlias: '고래2222',
         packagingOption: '합포장',
         packageList: ['전체'],
         productList: [
