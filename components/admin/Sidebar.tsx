@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
 import { cn } from '@/lib/cn'
 
 // All nav icons as stable JSX constants (no function re-creation overhead)
@@ -123,6 +124,17 @@ const navGroups: NavGroup[] = [
 export function Sidebar() {
   const pathname = usePathname()
 
+  // Only '패키징 내역' is open by default
+  const [openGroups, setOpenGroups] = useState<Set<string>>(new Set(['패키징 내역']))
+
+  function toggleGroup(label: string) {
+    setOpenGroups(prev => {
+      const next = new Set(prev)
+      next.has(label) ? next.delete(label) : next.add(label)
+      return next
+    })
+  }
+
   return (
     <aside className="w-[220px] shrink-0 bg-bg-default min-h-screen flex flex-col border-r border-border-default">
       {/* Header */}
@@ -142,23 +154,29 @@ export function Sidebar() {
       <nav className="flex-1 overflow-y-auto">
         {navGroups.map((group) => {
           const isGroupActive = group.children.some(c => pathname === c.href || pathname.startsWith(c.href + '/'))
+          const isOpen = openGroups.has(group.label)
           return (
             <div key={group.label}>
-              {/* Group header — h-[44px] per Figma */}
-              <div className="flex items-center h-[44px] p-[8px]">
+              {/* Group header */}
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className="w-full flex items-center h-[44px] p-[8px]"
+              >
                 <div className={cn(
                   'flex flex-1 items-center gap-2 h-full px-3 rounded-lg',
                   isGroupActive ? 'text-fg-default' : 'text-fg-subtle',
                 )}>
                   <span className="shrink-0 size-6">{group.icon}</span>
-                  <span className="flex-1 text-[14px] font-semibold leading-5 tracking-tight">{group.label}</span>
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0 text-fg-subtle" aria-hidden="true">
+                  <span className="flex-1 text-[14px] font-semibold leading-5 tracking-tight text-left">{group.label}</span>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    className={cn('shrink-0 text-fg-subtle transition-transform', isOpen && 'rotate-180')}
+                    aria-hidden="true">
                     <path d="M5 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
                 </div>
-              </div>
+              </button>
 
-              {group.children.map((child) => {
+              {isOpen && group.children.map((child) => {
                 const isActive = pathname === child.href || pathname.startsWith(child.href + '/')
                 return (
                   <Link

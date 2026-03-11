@@ -333,32 +333,29 @@ export function PackagingListContent() {
                         {/* ── 패키징 옵션 — rowspan per consecutive same option ── */}
                         {og.isFirstInGroup && (
                           <td rowSpan={og.groupSpan}
-                            className={cn(TD_ROWSPAN, 'min-w-[100px] text-center')}>
-                            <span className={cn(
-                              'inline-block px-2 py-0.5 rounded text-xs font-semibold',
-                              pkg.packagingOption === '합포장'   && 'bg-pink-100 text-pink-600',
-                              pkg.packagingOption === '구성품만' && 'bg-gray-100 text-gray-600',
-                              pkg.packagingOption === 'POB만'   && 'bg-purple-100 text-purple-600',
-                              pkg.packagingOption === '전체'    && 'bg-blue-100 text-blue-600',
-                            )}>
+                            className={cn(TD_ROWSPAN, 'min-w-[130px]')}>
+                            {/* 옵션 텍스트 — 뱃지 없이 굵은 텍스트 */}
+                            <div className="text-[13px] font-bold text-fg-default leading-5">
                               {pkg.packagingOption}
-                            </span>
+                            </div>
+                            {/* 병합된 경우(groupSpan > 1)엔 세부 내용 숨김; 단독 행만 표시 */}
+                            {og.groupSpan === 1 && (<>
+                              {pkg.packageList.map((p, i) => (
+                                <div key={i} className="text-[12px] text-fg-subtle leading-4 mt-0.5">{p}</div>
+                              ))}
+                              {pkg.userNote && (
+                                <div className="text-[12px] text-fg-accent-brand1-default leading-4 mt-0.5">
+                                  - 유저 요청사항: {pkg.userNote}
+                                </div>
+                              )}
+                            </>)}
                           </td>
                         )}
 
-                        {/* ── 패키징 될 패키지 목록: packageCode + packageList + note ── */}
-                        <td className={cn(TD, 'min-w-[180px]')}>
+                        {/* ── 패키징 될 패키지 목록: packageCode + alias only ── */}
+                        <td className={cn(TD, 'min-w-[152px]')}>
                           <div className="font-mono text-xs text-fg-default">{pkg.packageCode}</div>
-                          <div className="text-fg-subtle text-label-sm mb-1">({pkg.packageAlias})</div>
-                          {pkg.packageList.map((p, i) => (
-                            <div key={i} className="text-[12px] text-fg-subtle leading-4">{p}</div>
-                          ))}
-                          {pkg.userNote && (
-                            <div className="text-[12px] text-fg-accent-brand1-default leading-4 mt-0.5">
-                              <span className="font-semibold">- 유저 요청사항: </span>
-                              <span>{pkg.userNote}</span>
-                            </div>
-                          )}
+                          <div className="text-fg-subtle text-label-sm">({pkg.packageAlias})</div>
                         </td>
 
                         {/* ── 패키지 내 상품 목록 ── */}
