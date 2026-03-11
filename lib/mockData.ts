@@ -54,7 +54,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   // ── Page 1 (requests 1–10) ──────────────────────────────────────────────
   {
     requestId: '2601121705000105',
-    userId: 'gaellealienordalpos',
+    userId: 'taroseok0319',
     packageNumber: 'yTgP27Oc9Q',
     packageNumberAlias: '잉어7314',
     packages: [
@@ -105,7 +105,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   },
   {
     requestId: '2601121705000106',
-    userId: 'gaellealienordalpos',
+    userId: 'skyleralee90',
     packageNumber: 'x3outluhFQ',
     packageNumberAlias: '잉어2276',
     packages: [
@@ -159,7 +159,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   },
   {
     requestId: '2601121705000107',
-    userId: 'gaellealienordalpos',
+    userId: 'IZ0gEBbSzUdD4EktJyrgfspl',
     packageNumber: 'k7JpvBnX2L',
     packageNumberAlias: '가재5719',
     packages: [
@@ -197,7 +197,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   },
   {
     requestId: '2601121705000108',
-    userId: 'gaellealienordalpos',
+    userId: 'dana.al.baaj',
     packageNumber: 'xMajOvcGXb',
     packageNumberAlias: '가재3469',
     packages: [
@@ -235,7 +235,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   },
   {
     requestId: '2601121705000109',
-    userId: 'gaellealienordalpos',
+    userId: 'jessi-h.mail',
     packageNumber: 'n8pLsKtRwM',
     packageNumberAlias: '잉어3469',
     packages: [
@@ -869,7 +869,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   // ── Other statuses ───────────────────────────────────────────────────────
   {
     requestId: '2601121705000110',
-    userId: 'gaellealienordalpos',
+    userId: 'wRGls45oiZRKoABlkmTClX',
     packageNumber: 'zRqTm18kXa',
     packageNumberAlias: '잉어5512',
     packages: [
