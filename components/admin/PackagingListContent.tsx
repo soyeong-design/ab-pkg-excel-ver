@@ -382,20 +382,16 @@ export function PackagingListContent() {
                           {pkg.adminRecord || '-'}
                         </td>
 
-                        {/* ── 수량 / 요청일시 / 메모 — last row only ── */}
-                        {isLast ? (<>
-                          <td className={cn(TD, 'whitespace-nowrap')}>
+                        {/* ── 수량 / 요청일시 / 메모 — first row, rowspan ── */}
+                        {isFirst && (<>
+                          <td rowSpan={pkgCount} className={cn(TD_ROWSPAN, 'whitespace-nowrap')}>
                             <div className="text-label-sm text-fg-subtle">총 패키지 수</div>
                             <div className="text-fg-accent-brand1-default text-label-bold-sm">{pkgCount}개 {req.daysSince}</div>
                             <div className="text-label-sm text-fg-subtle mt-1">총 상품 수량</div>
                             <div className="text-fg-accent-brand1-default text-label-bold-sm">{totalQty}개</div>
                           </td>
-                          <td className={cn(TD, 'whitespace-nowrap text-fg-default')}>{req.requestedAt}</td>
-                          <td className={cn(TD, 'max-w-[140px] text-xs text-fg-subtle')}>{req.adminMemo || '-'}</td>
-                        </>) : (<>
-                          <td className={TD} />
-                          <td className={TD} />
-                          <td className={TD} />
+                          <td rowSpan={pkgCount} className={cn(TD_ROWSPAN, 'whitespace-nowrap text-fg-default')}>{req.requestedAt}</td>
+                          <td rowSpan={pkgCount} className={cn(TD_ROWSPAN, 'max-w-[140px] text-xs text-fg-subtle')}>{req.adminMemo || '-'}</td>
                         </>)}
                       </tr>
                     )

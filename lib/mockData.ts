@@ -106,8 +106,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000106',
     userId: 'skyleralee90',
-    packageNumber: 'x3outluhFQ',
-    packageNumberAlias: '사슴벌레2276',
+    packageNumber: 'pR9mKlJhGf',
+    packageNumberAlias: '사슴벌레8851',
     packages: [
       {
         packageCode: 'x3Vv9sYvqY',
@@ -160,8 +160,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000107',
     userId: 'IZ0gEBbSzUdD4EktJyrgfspl',
-    packageNumber: 'k7JpvBnX2L',
-    packageNumberAlias: '문어5719',
+    packageNumber: 'qT3nYzPxLm',
+    packageNumberAlias: '문어9472',
     packages: [
       {
         packageCode: 'k7JpvBnX2L',
@@ -198,8 +198,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000108',
     userId: 'dana.al.baaj',
-    packageNumber: 'xMajOvcGXb',
-    packageNumberAlias: '아기토끼3469',
+    packageNumber: 'wB7vXsOuRn',
+    packageNumberAlias: '아기토끼6231',
     packages: [
       {
         packageCode: 'xMajOvcGXb',
@@ -236,8 +236,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000109',
     userId: 'jessi-h.mail',
-    packageNumber: 'n8pLsKtRwM',
-    packageNumberAlias: '노을3469',
+    packageNumber: 'cF4gMiKjHe',
+    packageNumberAlias: '노을8814',
     packages: [
       {
         packageCode: 'n8pLsKtRwM',
@@ -271,8 +271,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000111',
     userId: 'blueocean_kpop',
-    packageNumber: 'nKpZr7AbcX',
-    packageNumberAlias: '봄3012',
+    packageNumber: 'hD2kPqLrGa',
+    packageNumberAlias: '봄7134',
     packages: [
       {
         packageCode: 'nKpZr7AbcX',
@@ -295,8 +295,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000112',
     userId: 'starlight_moon99',
-    packageNumber: 'mPqLs9XwRt',
-    packageNumberAlias: '달빛1847',
+    packageNumber: 'jZ8bWnTvXc',
+    packageNumberAlias: '달빛5392',
     packages: [
       {
         packageCode: 'mPqLs9XwRt',
@@ -332,8 +332,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000113',
     userId: 'hana_collector',
-    packageNumber: 'bCdEfGhIjK',
-    packageNumberAlias: '잉어9201',
+    packageNumber: 'yM5oQeNrFt',
+    packageNumberAlias: '하나4867',
     packages: [
       {
         packageCode: 'bCdEfGhIjK',
@@ -357,8 +357,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000114',
     userId: 'jisoo_fanclub',
-    packageNumber: 'lMnOpQrStU',
-    packageNumberAlias: '벚꽃5500',
+    packageNumber: 'lS6xAvJdCb',
+    packageNumberAlias: '벚꽃3120',
     packages: [
       {
         packageCode: 'lMnOpQrStU',
@@ -394,8 +394,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000115',
     userId: 'melody_universe',
-    packageNumber: 'fGhIjKlMnO',
-    packageNumberAlias: '봄7743',
+    packageNumber: 'uI1pHwEkBo',
+    packageNumberAlias: '선율9043',
     packages: [
       {
         packageCode: 'fGhIjKlMnO',
@@ -422,8 +422,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000116',
     userId: 'pinkrose_k',
-    packageNumber: 'pQrStUvWxY',
-    packageNumberAlias: '새4421',
+    packageNumber: 'tK0rCyFgDm',
+    packageNumberAlias: '장미2768',
     packages: [
       {
         packageCode: 'pQrStUvWxY',
@@ -446,8 +446,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000117',
     userId: 'night_kpop_shop',
-    packageNumber: 'zAbCdEfGhI',
-    packageNumberAlias: '은하6612',
+    packageNumber: 'xO7aUqPiWs',
+    packageNumberAlias: '은하4481',
     packages: [
       {
         packageCode: 'zAbCdEfGhI',
@@ -484,8 +484,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000118',
     userId: 'sunflower_idol',
-    packageNumber: 'tUvWxYzAbC',
-    packageNumberAlias: '가재8810',
+    packageNumber: 'vN4jLbRhYe',
+    packageNumberAlias: '해바라기6102',
     packages: [
       {
         packageCode: 'tUvWxYzAbC',
@@ -508,8 +508,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000119',
     userId: 'ocean_wave_merch',
-    packageNumber: 'dEfGhIjKlM',
-    packageNumberAlias: '파도2234',
+    packageNumber: 'zA6iQcSmTo',
+    packageNumberAlias: '파도9387',
     packages: [
       {
         packageCode: 'dEfGhIjKlM',
@@ -545,8 +545,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000120',
     userId: 'cherry_blossom_k',
-    packageNumber: 'xYzAbCdEfG',
-    packageNumberAlias: '새9900',
+    packageNumber: 'fE3hMwKxBl',
+    packageNumberAlias: '개나리1956',
     packages: [
       {
         packageCode: 'xYzAbCdEfG',
@@ -571,8 +571,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000121',
     userId: 'kpop_treasure_box',
-    packageNumber: 'hIjKlMnOpQ',
-    packageNumberAlias: '잉어3377',
+    packageNumber: 'gC5kDpIrJn',
+    packageNumberAlias: '보물7293',
     packages: [
       {
         packageCode: 'hIjKlMnOpQ',
@@ -596,8 +596,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000122',
     userId: 'aurora_kpop',
-    packageNumber: 'rStUvWxYzA',
-    packageNumberAlias: '오로라1155',
+    packageNumber: 'bA8mFtGqEu',
+    packageNumberAlias: '오로라5847',
     packages: [
       {
         packageCode: 'rStUvWxYzA',
@@ -633,8 +633,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000123',
     userId: 'starship_collector',
-    packageNumber: 'mNoPqRsTuV',
-    packageNumberAlias: '봄5588',
+    packageNumber: 'dV2nZoYlXq',
+    packageNumberAlias: '항성3162',
     packages: [
       {
         packageCode: 'mNoPqRsTuV',
@@ -657,8 +657,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000124',
     userId: 'rainbow_merch',
-    packageNumber: 'wXyZaBcDeF',
-    packageNumberAlias: '새7766',
+    packageNumber: 'eW9pOuRsKj',
+    packageNumberAlias: '무지개8034',
     packages: [
       {
         packageCode: 'wXyZaBcDeF',
@@ -682,8 +682,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000125',
     userId: 'moonlight_shop',
-    packageNumber: 'gHiJkLmNoP',
-    packageNumberAlias: '잉어8822',
+    packageNumber: 'iR7fNqKvCd',
+    packageNumberAlias: '월광4619',
     packages: [
       {
         packageCode: 'gHiJkLmNoP',
@@ -709,8 +709,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000126',
     userId: 'galaxy_kpop_buy',
-    packageNumber: 'qRsTuVwXyZ',
-    packageNumberAlias: '가재4433',
+    packageNumber: 'kU1wHxBmTo',
+    packageNumberAlias: '별자리7280',
     packages: [
       {
         packageCode: 'qRsTuVwXyZ',
@@ -733,8 +733,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000127',
     userId: 'crystal_collector',
-    packageNumber: 'aBcDeFgHiJ',
-    packageNumberAlias: '봄1199',
+    packageNumber: 'mX4yJzAnFp',
+    packageNumberAlias: '수정2935',
     packages: [
       {
         packageCode: 'aBcDeFgHiJ',
@@ -759,8 +759,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000128',
     userId: 'dream_kpop_store',
-    packageNumber: 'kLmNoPqRsT',
-    packageNumberAlias: '꿈3301',
+    packageNumber: 'nQ6bLcMrEg',
+    packageNumberAlias: '꿈5748',
     packages: [
       {
         packageCode: 'kLmNoPqRsT',
@@ -795,8 +795,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000129',
     userId: 'violet_star_shop',
-    packageNumber: 'eFgHiJkLmN',
-    packageNumberAlias: '잉어6699',
+    packageNumber: 'oT3dIaGkWh',
+    packageNumberAlias: '제비꽃1826',
     packages: [
       {
         packageCode: 'eFgHiJkLmN',
@@ -819,8 +819,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000130',
     userId: 'sakura_merch',
-    packageNumber: 'oPqRsTuVwX',
-    packageNumberAlias: '가재2277',
+    packageNumber: 'pS8eKbFjVn',
+    packageNumberAlias: '연꽃9043',
     packages: [
       {
         packageCode: 'oPqRsTuVwX',
@@ -844,8 +844,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000131',
     userId: 'stellar_kpop',
-    packageNumber: 'yZaBcDeFgH',
-    packageNumberAlias: '봄9988',
+    packageNumber: 'qL5fMcHiYm',
+    packageNumberAlias: '별똥별3678',
     packages: [
       {
         packageCode: 'yZaBcDeFgH',
@@ -870,8 +870,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000110',
     userId: 'wRGls45oiZRKoABlkmTClX',
-    packageNumber: 'zRqTm18kXa',
-    packageNumberAlias: '참치5512',
+    packageNumber: 'rP2gNdJwXo',
+    packageNumberAlias: '참치8127',
     packages: [
       {
         packageCode: 'zRqTm18kXa',
@@ -894,8 +894,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000101',
     userId: 'completedUser01',
-    packageNumber: 'cPkgAbc123',
-    packageNumberAlias: '목련1001',
+    packageNumber: 'sO9hKlIuBa',
+    packageNumberAlias: '목련6259',
     packages: [
       {
         packageCode: 'cPkgAbc123',
@@ -915,8 +915,8 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
   {
     requestId: '2601121705000102',
     userId: 'heldUser01',
-    packageNumber: 'hPkgXyz789',
-    packageNumberAlias: '고래2222',
+    packageNumber: 'tN7iLoHtCb',
+    packageNumberAlias: '고래4381',
     packages: [
       {
         packageCode: 'hPkgXyz789',
