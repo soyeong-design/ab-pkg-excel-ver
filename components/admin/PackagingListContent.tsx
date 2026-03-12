@@ -174,9 +174,9 @@ export function PackagingListContent() {
         <div className="flex items-center gap-2 text-label-sm text-fg-subtle mb-1">
           <span>패키징 내역</span><span>›</span>
           <span>패키징 처리</span><span>›</span>
-          <span className="text-fg-default font-medium">패키징 시작</span>
+          <span className="text-fg-default font-medium">{tabs.find(t => t.id === activeTab)?.label}</span>
         </div>
-        <h1 className="text-heading-lg text-fg-default">패키징 처리</h1>
+        <h1 className="text-heading-lg text-fg-default">{tabs.find(t => t.id === activeTab)?.label}</h1>
       </div>
 
       {/* Tabs */}

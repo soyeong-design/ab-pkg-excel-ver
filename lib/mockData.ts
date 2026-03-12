@@ -955,7 +955,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
     packages: [
       {
         packageCode: 'yBiDACwkph',
-        packageAlias: '장미9103',
+        packageAlias: '코스모스2341',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -969,7 +969,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'yN5Yktz9wx',
-        packageAlias: '물결5229',
+        packageAlias: '코스모스5678',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -983,7 +983,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
       },
       {
         packageCode: 'yMoCpRyHXV',
-        packageAlias: '물결5727',
+        packageAlias: '코스모스9012',
         packagingOption: '합포장',
         packageList: ['합포장'],
         productList: [
@@ -1146,7 +1146,7 @@ export const MOCK_RECEIVING_HISTORIES: Record<string, PackagingReceivingHistory>
     items: [
       {
         orderItemCode: 'yBiDACwkph',
-        orderItemAlias: '장미9103',
+        orderItemAlias: '코스모스2341',
         albumbuddyOrderId: 'b715c4c1-caf7-4359-bb80-a4b0640e7af3',
         vendor: '에버라인',
         orderedProduct: { name: '원팩트 - [fallIn\'] / 2집 미니앨범', qty: 6 },
@@ -1193,7 +1193,7 @@ export const MOCK_RECEIVING_HISTORIES: Record<string, PackagingReceivingHistory>
       },
       {
         orderItemCode: 'yN5Yktz9wx',
-        orderItemAlias: '물결5229',
+        orderItemAlias: '코스모스5678',
         albumbuddyOrderId: 'b715c4c1-caf7-4359-bb80-a4b0640e7af3',
         vendor: '팬즈',
         orderedProduct: { name: '[PRE-ORDER/EVENT] 82MAJOR - 2026 SPEC CALENDAR [우리의 계절]', qty: 2 },
@@ -1221,7 +1221,7 @@ export const MOCK_RECEIVING_HISTORIES: Record<string, PackagingReceivingHistory>
       },
       {
         orderItemCode: 'yMoCpRyHXV',
-        orderItemAlias: '물결5727',
+        orderItemAlias: '코스모스9012',
         albumbuddyOrderId: 'b715c4c1-caf7-4359-bb80-a4b0640e7af3',
         vendor: '번개장터',
         orderedProduct: { name: '이달의 소녀 LOONA 아르테미스 ARTMS 츄 CHU UUU 굿즈 일괄', qty: 1 },
