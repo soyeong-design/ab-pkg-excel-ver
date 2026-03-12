@@ -264,7 +264,15 @@ export function PackagingListContent() {
                   </Button>
                 </>
               ) : (
-                <Button size="lg" color="brand1" isDisabled={!hasSelection}>패키징 완료 처리</Button>
+                <Button
+                  size="lg"
+                  color="brand1"
+                  isDisabled={!hasSelection}
+                  onClick={() => {
+                    const firstId = [...selectedIds][0]
+                    if (firstId) router.push(`/packaging/${firstId}/complete`)
+                  }}
+                >패키징 완료 처리</Button>
               )}
             </div>
           </div>
