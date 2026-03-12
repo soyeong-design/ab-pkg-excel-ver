@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import { PackageSelectDialog } from '@/components/admin/dialogs/PackageSelectDialog'
 import { IncompleteItemsDialog } from '@/components/admin/dialogs/IncompleteItemsDialog'
+import { PackagingCompletionDialog } from '@/components/admin/dialogs/PackagingCompletionDialog'
 import type { PackagingItem } from '@/lib/mockData'
 
 interface Props {
@@ -18,6 +19,7 @@ export function PackagingDetailContent({ item }: Props) {
   const router = useRouter()
   const [showPackageSelect, setShowPackageSelect] = useState(false)
   const [showIncomplete, setShowIncomplete] = useState(false)
+  const [showCompletion, setShowCompletion] = useState(false)
   const [adminMemo, setAdminMemo] = useState(item.adminMemo)
   const [userMessage, setUserMessage] = useState('')
   const [assignedPackages, setAssignedPackages] = useState<string[]>([])
@@ -25,11 +27,7 @@ export function PackagingDetailContent({ item }: Props) {
   const unassignedCount = item.productList.filter(p => !p.isPob).length
 
   function handleCompleteClick() {
-    if (unassignedCount > 0 && assignedPackages.length === 0) {
-      setShowIncomplete(true)
-    } else {
-      router.push('/packaging?tab=completed')
-    }
+    setShowCompletion(true)
   }
 
   function handlePackageSelect(pkgId: string) {
@@ -257,6 +255,16 @@ export function PackagingDetailContent({ item }: Props) {
           onCancel={() => setShowIncomplete(false)}
           onConfirm={() => {
             setShowIncomplete(false)
+            router.push('/packaging?tab=completed')
+          }}
+        />
+      )}
+      {showCompletion && (
+        <PackagingCompletionDialog
+          item={item}
+          onCancel={() => setShowCompletion(false)}
+          onConfirm={() => {
+            setShowCompletion(false)
             router.push('/packaging?tab=completed')
           }}
         />

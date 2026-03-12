@@ -40,6 +40,7 @@ export interface ProductItem {
   name: string
   qty: number
   isPob?: boolean
+  preOptionQty?: number  // 패키징 옵션 적용 전 본품 수량 (회색 표기용)
 }
 
 // Legacy type — used by detail page
@@ -126,7 +127,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
         productList: [
           { name: 'Card-shaped photos printed with portraits', qty: 5 },
-          { name: '12/11 1:1 영상통화 EVENT] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0 },
+          { name: '12/11 1:1 영상통화 EVENT] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0, preOptionQty: 2 },
           { name: '포토카드, 특전 등 구성품 세트', qty: 3, isPob: true },
         ],
         storageLocation: 'D-06-05',
@@ -151,7 +152,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         packageList: ['구성품만'],
         productList: [
           { name: 'Card-shaped photos printed with portraits', qty: 3 },
-          { name: '루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST] (DAY Ver. / LIGHT Ver.) (META)', qty: 0 },
+          { name: '루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST] (DAY Ver. / LIGHT Ver.) (META)', qty: 0, preOptionQty: 2 },
           { name: '포토카드, 특전, 시즌그리팅 등 구성품 세트', qty: 2, isPob: true },
           { name: '특전 증명사진', qty: 1, isPob: true },
         ],
@@ -165,7 +166,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         packageList: ['구성품만', 'POB만'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
         productList: [
-          { name: '12/24 1:1 영상통화 EVENT] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0 },
+          { name: '12/24 1:1 영상통화 EVENT] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0, preOptionQty: 2 },
           { name: '포토카드, 특전 등 구성품 세트', qty: 2, isPob: true },
           { name: 'Card-shaped photos printed with portraits', qty: 3 },
           { name: 'film prints', qty: 1 },
@@ -204,7 +205,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         packagingOption: '구성품만',
         packageList: ['구성품만'],
         productList: [
-          { name: '[10/19 1:1 VIDEO CALL FANSIGN] LUN8(루네이트) - 2nd SINGLE ALBUM [LOST]', qty: 0 },
+          { name: '[10/19 1:1 VIDEO CALL FANSIGN] LUN8(루네이트) - 2nd SINGLE ALBUM [LOST]', qty: 0, preOptionQty: 2 },
           { name: '포토카드, 특전 등 구성품 세트', qty: 5, isPob: true },
           { name: 'Card-shaped photos printed with portraits', qty: 3 },
         ],
@@ -218,7 +219,7 @@ export const MOCK_PACKAGING_REQUESTS: PackagingRequest[] = [
         packageList: ['POB만'],
         userNote: 'the signed album plus all the pobs and the signed polaroid.',
         productList: [
-          { name: '[준우][1/11 포토 이벤트] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0 },
+          { name: '[준우][1/11 포토 이벤트] 루네이트 (LUN8) - 2nd SINGLE ALBUM [LOST]', qty: 0, preOptionQty: 1 },
           { name: 'POB: photocard', qty: 12, isPob: true },
         ],
         storageLocation: 'D-06-05',
