@@ -295,18 +295,38 @@ function PackageInputForm() {
               placeholder="g" className={inputCls} />
           </div>
         </div>
-        {/* 리패키징 여부 */}
+        {/* 리패키징 여부 — 체크박스 (Figma 246-63302) */}
         <div className="flex flex-1">
-          <div className={labelCls}>
-            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">리패키징 여부</span>
+          <div className="w-[100px] shrink-0 bg-bg-subtle border-r border-[#e9ecef] px-4 flex items-center min-h-[56px]">
+            <span className="text-[14px] font-semibold text-[#212529] leading-5 tracking-[-0.3px] break-keep">
+              리패키징<br />여부
+            </span>
           </div>
-          <div className="flex-1 px-4 py-3">
-            <select value={repackaging} onChange={e => setRepackaging(e.target.value)}
-              className="w-full h-10 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default appearance-none cursor-pointer">
-              <option value="">선택</option>
-              <option value="필요">리패키징 필요</option>
-              <option value="불필요">리패키징 불필요</option>
-            </select>
+          <div className="flex-1 flex items-center px-5 min-h-[56px]">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={repackaging === '필요'}
+                onChange={e => setRepackaging(e.target.checked ? '필요' : '')}
+                className="sr-only"
+              />
+              {/* 커스텀 체크박스 (Figma: 24x24, border #dee2e6, rounded-[4px]) */}
+              <span className={cn(
+                'w-6 h-6 rounded-[4px] border flex items-center justify-center shrink-0 transition-colors',
+                repackaging === '필요'
+                  ? 'bg-fg-accent-brand1-default border-fg-accent-brand1-default'
+                  : 'bg-white border-[#dee2e6]',
+              )}>
+                {repackaging === '필요' && (
+                  <svg width="12" height="9" viewBox="0 0 12 9" fill="none" aria-hidden="true">
+                    <path d="M1 4.5L4.5 8L11 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </span>
+              <span className="text-[14px] font-normal text-[#212529] leading-5 tracking-[-0.3px] whitespace-nowrap">
+                리패키징 필요
+              </span>
+            </label>
           </div>
         </div>
       </div>
@@ -381,19 +401,17 @@ function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTab
 
       {!collapsed && (
         <>
-          {/* 미할당 경고 */}
-          {hasUnassigned && (
-            <div className="mx-4 my-3 flex items-start gap-3 px-4 py-3 rounded-lg bg-bg-accent-yellow-subtlest border border-border-accent-yellow-subtlest">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-yellow-default shrink-0 mt-0.5" aria-hidden="true">
-                <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <circle cx="8" cy="11" r=".75" fill="currentColor" />
-              </svg>
-              <p className="text-body-regular-sm text-fg-accent-yellow-default leading-5">
-                기본 패키지 #1에 포장되지 않은 상품의 수량을 0으로 표기 후, 패키지를 추가해 포장된 수량의 합이 기대값에 도달하세요.
-              </p>
-            </div>
-          )}
+          {/* 블루 인포박스 (Figma 246-63322 — 항상 표시) */}
+          <div className="mx-4 my-3 flex items-start gap-2 px-4 py-3 rounded-lg bg-white border border-[#008fff]">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 mt-0.5" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.5" stroke="#008fff" strokeWidth="1.5" />
+              <path d="M8 7v4" stroke="#008fff" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="5.5" r=".75" fill="#008fff" />
+            </svg>
+            <p className="text-[14px] font-bold text-[#008fff] leading-5 tracking-[-0.3px]">
+              기본 패키지#1 에 포장되지 않은 상품은 수량을 0으로 표기 후, 패키지를 추가해 포장된 수량을 기입해주세요.
+            </p>
+          </div>
 
           {/* 테이블 헤더 */}
           <div className="flex items-stretch border-b border-border-default bg-bg-subtle text-label-md text-fg-subtle">
@@ -428,13 +446,20 @@ function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTab
                 <div className={cn(
                   COL_OPTION,
                   'border-r border-border-default flex flex-col items-center justify-center px-3 py-3 text-center',
-                  pkg.packagingOption === '구성품만' && 'bg-bg-accent-brand2-subtlest',
-                  pkg.packagingOption === 'POB만'   && 'bg-bg-accent-brand1-subtlest',
+                  pkg.packagingOption === '합포장'   && 'bg-[#ebf5fb]',
+                  pkg.packagingOption === '구성품만' && 'bg-[#f3eeff]',
+                  pkg.packagingOption === 'POB만'   && 'bg-[#fff0f5]',
                 )}>
-                  <p className="text-[13px] font-bold text-fg-default leading-5">{pkg.packagingOption}</p>
-                  {pkg.packageList.filter(l => l !== pkg.packagingOption).slice(0, 1).map((l, i) => (
-                    <p key={i} className="text-[11px] text-fg-subtle mt-0.5 leading-4">{l}</p>
-                  ))}
+                  <p className="text-[13px] font-bold text-[#212529] leading-5">{pkg.packagingOption}</p>
+                  {/* 구성품만만 부가 텍스트 표시 (packageList에서 '구성품만' 제외한 항목) */}
+                  {pkg.packagingOption === '구성품만' &&
+                    pkg.packageList
+                      .filter(l => l !== '구성품만')
+                      .slice(0, 1)
+                      .map((l, i) => (
+                        <p key={i} className="text-[11px] text-[#868e96] mt-0.5 leading-4 break-keep">{l}</p>
+                      ))
+                  }
                 </div>
 
                 {/* 패키지 코드 (세로 전체 병합) */}
