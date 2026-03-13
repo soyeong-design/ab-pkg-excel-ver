@@ -776,15 +776,12 @@ function ProductTable({ packages, getItemQty, totalAllocations, allPkgAllocation
                                 ({product.preOptionQty}개)
                               </span>
                             )}
-                            {badge?.type === 'over' && isPkgSplit ? (
-                              <Badge size="sm" type="round" color="green">
-                                요청 반영 / {badge.excess}개 · ✂️ 분할 포장 / {pkgBreakdown.map(p => `${p.label.replace(/^📦 /, '')} · ${p.qty}개`).join(' , ')}
-                              </Badge>
-                            ) : badge?.type === 'over' ? (
+                            {badge?.type === 'over' && (
                               <Badge size="sm" type="round" color="green">
                                 요청 반영 / {badge.excess}개
                               </Badge>
-                            ) : isPkgSplit ? (
+                            )}
+                            {isPkgSplit ? (
                               <Badge size="sm" type="round" color="yellow">
                                 ✂️ 분할 포장 / {pkgBreakdown.map(p => `${p.label.replace(/^📦 /, '')} · ${p.qty}개`).join(' , ')}
                                 {totalAllocated < originalQty && ` / ${originalQty - totalAllocated}개 남음`}
