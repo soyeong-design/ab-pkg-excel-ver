@@ -58,6 +58,8 @@ export function PackagingCompleteContent({ request }: Props) {
   const [userMessage, setUserMessage] = useState('')
   const [adminMemo, setAdminMemo] = useState(request.adminMemo)
   const [addedPkgs, setAddedPkgs] = useState<AddedPkg[]>([])
+  const [deleteTarget, setDeleteTarget] = useState<{ id: number; label: string } | null>(null)
+  const [showUnallocatedWarning, setShowUnallocatedWarning] = useState(false)
 
   // 전체 할당 합산 (기본 패키지 + 모든 추가 패키지)
   const totalAllocations = useMemo<PackageQtys>(() => {
@@ -264,6 +266,7 @@ export function PackagingCompleteContent({ request }: Props) {
               showItem={(pkgIdx, prodIdx) => (`${pkgIdx}-${prodIdx}` in ap.qtys)}
               onUpdateQty={(pkgIdx, prodIdx, val) => updateAddedQty(ap.id, pkgIdx, prodIdx, val)}
               showInfobox={false}
+              onDelete={() => setDeleteTarget({ id: ap.id, label: `추가 패키지 #${idx + 2}` })}
             />
           ))}
         </div>
@@ -275,11 +278,49 @@ export function PackagingCompleteContent({ request }: Props) {
           <Link href="/packaging?tab=started">
             <Button size="xl" variant="outline" color="default">취소</Button>
           </Link>
-          <Button size="xl" color="brand1" onClick={() => router.push('/packaging?tab=completed')}>
-            완료
+          <Button
+            size="xl"
+            color="brand1"
+            onClick={() => {
+              const hasRemaining = request.packages.some((pkg, pkgIdx) =>
+                pkg.productList.some((prod, prodIdx) =>
+                  (totalAllocations[pkgIdx]?.[prodIdx] ?? 0) < prod.qty
+                )
+              )
+              if (hasRemaining) {
+                setShowUnallocatedWarning(true)
+              } else {
+                router.push('/packaging?tab=completed')
+              }
+            }}
+          >
+            패키징 완료 처리
           </Button>
         </div>
       </div>
+
+      {/* 패키지 삭제 확인 다이얼로그 */}
+      {deleteTarget && (
+        <DeletePackageDialog
+          label={deleteTarget.label}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={() => {
+            setAddedPkgs(prev => prev.filter(ap => ap.id !== deleteTarget.id))
+            setDeleteTarget(null)
+          }}
+        />
+      )}
+
+      {/* 수량 미할당 경고 다이얼로그 */}
+      {showUnallocatedWarning && (
+        <UnallocatedWarningDialog
+          onCancel={() => setShowUnallocatedWarning(false)}
+          onConfirm={() => {
+            setShowUnallocatedWarning(false)
+            router.push('/packaging?tab=completed')
+          }}
+        />
+      )}
     </>
   )
 }
@@ -315,14 +356,27 @@ interface PackageWorkCardProps {
   showItem?: (pkgIdx: number, prodIdx: number) => boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
   showInfobox?: boolean
+  onDelete?: () => void
 }
 
-function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, showItem, onUpdateQty, showInfobox = true }: PackageWorkCardProps) {
+function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, showItem, onUpdateQty, showInfobox = true, onDelete }: PackageWorkCardProps) {
   return (
     <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
       {/* ── 헤더 ── */}
-      <div className="px-4 py-3 bg-bg-subtle border-b border-border-default">
-        <span className="text-body-bold-md text-fg-default">{cardLabel}</span>
+      <div className="flex items-center justify-between px-4 py-[8px] bg-[#f8f9fa] border-b border-[#dee2e6] min-h-[48px]">
+        <span className="text-[16px] font-semibold text-[#212529] leading-6 tracking-[-0.3px]">{cardLabel}</span>
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            className="w-8 h-8 flex items-center justify-center rounded-[8px] border border-[#ff3434] bg-white shrink-0 hover:bg-red-50 transition-colors"
+            aria-label="패키지 삭제"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M3 5h12M7 5V3.5h4V5M14 5l-.75 9.5H4.75L4 5" stroke="#ff3434" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M7.5 8.5v4M10.5 8.5v4" stroke="#ff3434" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
       </div>
 
       {/* ── 입력 폼: 3열 × 2행 ── */}
@@ -352,8 +406,8 @@ function PackageInputForm() {
   const [length, setLength] = useState('')
 
   // 100px 라벨 + 나머지 인풋, Figma ADM Table 스타일
-  const labelCls = 'w-[100px] shrink-0 bg-bg-subtle border-r border-border-default px-4 flex items-center gap-1'
-  const inputCls = 'w-full h-10 px-4 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default'
+  const labelCls = 'w-[100px] shrink-0 bg-[#f8f9fa] border-r border-[#e9ecef] px-4 flex items-center gap-1.5 min-h-[48px]'
+  const inputCls = 'w-full h-10 px-4 rounded-lg border border-[#dee2e6] bg-[#f8f9fa] text-[16px] text-fg-default placeholder:text-[#868e96] focus:outline-none focus:border-fg-accent-brand1-default'
 
   return (
     <>
@@ -421,27 +475,30 @@ function PackageInputForm() {
       <div className="flex border-b border-border-default">
         <div className="flex flex-1 border-r border-border-default">
           <div className={labelCls}>
-            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">가로(cm)</span>
+            <span className="text-[14px] font-semibold text-[#212529] leading-5 tracking-[-0.3px] whitespace-nowrap">가로(cm)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
           </div>
-          <div className="flex-1 px-4 py-3">
+          <div className="flex-1 p-4">
             <input value={width} onChange={e => setWidth(e.target.value)}
               placeholder="w" className={inputCls} />
           </div>
         </div>
         <div className="flex flex-1 border-r border-border-default">
           <div className={labelCls}>
-            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">세로(cm)</span>
+            <span className="text-[14px] font-semibold text-[#212529] leading-5 tracking-[-0.3px] whitespace-nowrap">세로(cm)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
           </div>
-          <div className="flex-1 px-4 py-3">
+          <div className="flex-1 p-4">
             <input value={depth} onChange={e => setDepth(e.target.value)}
               placeholder="h" className={inputCls} />
           </div>
         </div>
         <div className="flex flex-1">
           <div className={labelCls}>
-            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">길이(cm)</span>
+            <span className="text-[14px] font-semibold text-[#212529] leading-5 tracking-[-0.3px] whitespace-nowrap">길이(cm)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
           </div>
-          <div className="flex-1 px-4 py-3">
+          <div className="flex-1 p-4">
             <input value={length} onChange={e => setLength(e.target.value)}
               placeholder="l" className={inputCls} />
           </div>
@@ -630,6 +687,93 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
           </div>
         </>
       )}
+    </div>
+  )
+}
+
+// ─── 패키지 삭제 확인 다이얼로그 ──────────────────────────────────────────────
+
+function DeletePackageDialog({ label, onCancel, onConfirm }: {
+  label: string
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+      <div className="relative z-10 bg-white rounded-[16px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.16)] w-[400px] max-w-[calc(100vw-32px)] flex flex-col overflow-hidden">
+        {/* 헤더 */}
+        <div className="pt-[20px] px-[20px]">
+          <p className="text-[24px] font-bold text-[#212529] leading-[40px] tracking-[-0.3px]">정말 삭제하시겠어요?</p>
+        </div>
+        {/* 본문 */}
+        <div className="p-[20px]">
+          <p className="text-[16px] text-[#212529] leading-[24px] tracking-[-0.3px]">
+            작성된 정보는 저장되지 않습니다.<br />
+            <span className="font-semibold">{label}</span>를 삭제하시겠어요?
+          </p>
+        </div>
+        {/* 버튼 */}
+        <div className="p-[20px]">
+          <div className="flex gap-[12px]">
+            <button
+              onClick={onCancel}
+              className="flex-1 h-[56px] flex items-center justify-center rounded-[8px] border border-[#dee2e6] text-[18px] font-bold text-[#212529] tracking-[-0.3px] hover:bg-gray-50 transition-colors"
+            >
+              취소
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 h-[56px] flex items-center justify-center rounded-[8px] bg-[#ff3434] text-[18px] font-bold text-white tracking-[-0.3px] hover:bg-[#e62e2e] transition-colors"
+            >
+              삭제
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── 수량 미할당 경고 다이얼로그 ──────────────────────────────────────────────
+
+function UnallocatedWarningDialog({ onCancel, onConfirm }: {
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onCancel} />
+      <div className="relative z-10 bg-white rounded-[16px] shadow-[0px_4px_20px_0px_rgba(0,0,0,0.16)] w-[400px] max-w-[calc(100vw-32px)] flex flex-col overflow-hidden">
+        {/* 헤더 */}
+        <div className="pt-[20px] px-[20px]">
+          <p className="text-[24px] font-bold text-[#212529] leading-[40px] tracking-[-0.3px]">남아있는 상품이 있습니다.</p>
+        </div>
+        {/* 본문 */}
+        <div className="p-[20px]">
+          <p className="text-[16px] text-[#212529] leading-[24px] tracking-[-0.3px]">
+            패키지에 할당되지 않은 상품이 있습니다.<br />
+            패키징 완료 처리를 할까요?
+          </p>
+        </div>
+        {/* 버튼 */}
+        <div className="p-[20px]">
+          <div className="flex gap-[12px]">
+            <button
+              onClick={onCancel}
+              className="flex-1 h-[56px] flex items-center justify-center rounded-[8px] border border-[#dee2e6] text-[18px] font-bold text-[#212529] tracking-[-0.3px] hover:bg-gray-50 transition-colors"
+            >
+              취소
+            </button>
+            <button
+              onClick={onConfirm}
+              className="flex-1 h-[56px] flex items-center justify-center rounded-[8px] bg-[#ff558f] text-[18px] font-bold text-white tracking-[-0.3px] hover:bg-[#e64d82] transition-colors"
+            >
+              패키징 완료 처리
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
