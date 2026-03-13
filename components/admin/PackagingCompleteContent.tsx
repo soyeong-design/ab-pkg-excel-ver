@@ -111,7 +111,7 @@ export function PackagingCompleteContent({ request }: Props) {
       pkg.productList.forEach((prod, prodIdx) => {
         const total = totalAllocations[pkgIdx]?.[prodIdx] ?? 0
         if (total < prod.qty) {
-          newQtys[`${pkgIdx}-${prodIdx}`] = prod.qty - total
+          newQtys[`${pkgIdx}-${prodIdx}`] = 0
         }
       })
     })
