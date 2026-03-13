@@ -396,7 +396,7 @@ export function PackagingListContent() {
                                   </span>
                                   <span className="shrink-0 whitespace-nowrap">
                                     <span className="text-fg-subtle">/ </span>
-                                    <span className={cn('font-medium', prod.isPob ? 'text-fg-accent-brand1-default' : 'text-fg-accent-brand2-default')}>
+                                    <span className="font-medium text-fg-accent-brand1-default">
                                       {prod.qty}개
                                     </span>
                                     {isMainZeroed && prod.preOptionQty != null && (

@@ -16,6 +16,11 @@ interface PackageQtys {
   [pkgIndex: number]: number[]
 }
 
+interface AddedPkg {
+  id: number
+  qtys: PackageQtys
+}
+
 // ─── ADM 테이블 스타일 행 ──────────────────────────────────────────────────────
 
 function AdmRow({ label, required, children, noBorder }: {
@@ -49,6 +54,7 @@ export function PackagingCompleteContent({ request }: Props) {
   const [albumQty, setAlbumQty] = useState('')
   const [userMessage, setUserMessage] = useState('')
   const [adminMemo, setAdminMemo] = useState(request.adminMemo)
+  const [addedPkgs, setAddedPkgs] = useState<AddedPkg[]>([])
 
   function updateQty(pkgIdx: number, prodIdx: number, value: string) {
     const num = parseInt(value, 10)
@@ -57,6 +63,29 @@ export function PackagingCompleteContent({ request }: Props) {
         ...prev,
         [pkgIdx]: prev[pkgIdx].map((q, i) => (i === prodIdx ? num : q)),
       }))
+    }
+  }
+
+  function handleAddPackage() {
+    const initQtys: PackageQtys = {}
+    request.packages.forEach((pkg, pkgIdx) => {
+      initQtys[pkgIdx] = pkg.productList.map((prod, prodIdx) => {
+        const baseQty = qtys[pkgIdx]?.[prodIdx] ?? prod.qty
+        return Math.max(0, prod.qty - baseQty)
+      })
+    })
+    setAddedPkgs(prev => [...prev, { id: Date.now(), qtys: initQtys }])
+  }
+
+  function updateAddedQty(addedId: number, pkgIdx: number, prodIdx: number, value: string) {
+    const num = parseInt(value, 10)
+    if (!isNaN(num) && num >= 0) {
+      setAddedPkgs(prev => prev.map(ap =>
+        ap.id !== addedId ? ap : {
+          ...ap,
+          qtys: { ...ap.qtys, [pkgIdx]: ap.qtys[pkgIdx].map((q, i) => i === prodIdx ? num : q) },
+        }
+      ))
     }
   }
 
@@ -151,7 +180,10 @@ export function PackagingCompleteContent({ request }: Props) {
           <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
               <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">작업 정보 입력</h2>
-              <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border-default bg-bg-default text-label-md text-fg-default hover:bg-bg-subtle transition-colors">
+              <button
+                onClick={handleAddPackage}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border-default bg-bg-default text-label-md text-fg-default hover:bg-bg-subtle transition-colors"
+              >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
@@ -180,11 +212,26 @@ export function PackagingCompleteContent({ request }: Props) {
 
           {/* 📦 기본 패키지 #1 카드 */}
           <PackageWorkCard
+            cardLabel="📦 기본 패키지 #1"
             packages={request.packages}
             qtys={qtys}
             hasUnassigned={hasUnassigned}
             onUpdateQty={updateQty}
+            showInfobox
           />
+
+          {/* 추가 패키지 카드들 */}
+          {addedPkgs.map((ap, idx) => (
+            <PackageWorkCard
+              key={ap.id}
+              cardLabel={`📦 추가 패키지 #${idx + 2}`}
+              packages={request.packages}
+              qtys={ap.qtys}
+              hasUnassigned={false}
+              onUpdateQty={(pkgIdx, prodIdx, val) => updateAddedQty(ap.id, pkgIdx, prodIdx, val)}
+              showInfobox={false}
+            />
+          ))}
         </div>
       </div>
 
@@ -227,18 +274,20 @@ function UploadArea() {
 // ─── 📦 기본 패키지 작업 카드 ─────────────────────────────────────────────────
 
 interface PackageWorkCardProps {
+  cardLabel: string
   packages: SubPackage[]
   qtys: PackageQtys
   hasUnassigned: boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
+  showInfobox?: boolean
 }
 
-function PackageWorkCard({ packages, qtys, hasUnassigned, onUpdateQty }: PackageWorkCardProps) {
+function PackageWorkCard({ cardLabel, packages, qtys, hasUnassigned, onUpdateQty, showInfobox = true }: PackageWorkCardProps) {
   return (
     <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
-      {/* ── 📦 기본 패키지 #1 헤더 ── */}
+      {/* ── 헤더 ── */}
       <div className="px-4 py-3 bg-bg-subtle border-b border-border-default">
-        <span className="text-body-bold-md text-fg-default">📦 기본 패키지 #1</span>
+        <span className="text-body-bold-md text-fg-default">{cardLabel}</span>
       </div>
 
       {/* ── 입력 폼: 3열 × 2행 ── */}
@@ -250,6 +299,7 @@ function PackageWorkCard({ packages, qtys, hasUnassigned, onUpdateQty }: Package
         qtys={qtys}
         hasUnassigned={hasUnassigned}
         onUpdateQty={onUpdateQty}
+        showInfobox={showInfobox}
       />
     </div>
   )
@@ -372,15 +422,11 @@ interface ProductTableProps {
   qtys: PackageQtys
   hasUnassigned: boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
+  showInfobox?: boolean
 }
 
-function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTableProps) {
+function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty, showInfobox = true }: ProductTableProps) {
   const [collapsed, setCollapsed] = useState(false)
-
-  // 컬럼 너비 (Figma 246:63245 기준)
-  const COL_OPTION  = 'w-[160px] shrink-0'
-  const COL_PKG     = 'w-[152px] shrink-0'
-  const COL_QTY     = 'w-[200px] shrink-0'
 
   return (
     <div>
@@ -401,135 +447,135 @@ function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTab
 
       {!collapsed && (
         <>
-          {/* 블루 인포박스 (Figma 246-63322 — 항상 표시) */}
-          <div className="mx-4 my-3 flex items-start gap-2 px-4 py-3 rounded-lg bg-white border border-[#008fff]">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 mt-0.5" aria-hidden="true">
-              <circle cx="8" cy="8" r="6.5" stroke="#008fff" strokeWidth="1.5" />
-              <path d="M8 7v4" stroke="#008fff" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="8" cy="5.5" r=".75" fill="#008fff" />
-            </svg>
-            <p className="text-[14px] font-bold text-[#008fff] leading-5 tracking-[-0.3px]">
-              기본 패키지#1 에 포장되지 않은 상품은 수량을 0으로 표기 후, 패키지를 추가해 포장된 수량을 기입해주세요.
-            </p>
-          </div>
-
-          {/* 테이블 헤더 */}
-          <div className="flex items-stretch border-b border-border-default bg-bg-subtle text-label-md text-fg-subtle">
-            <div className={cn(COL_OPTION, 'px-3 py-2.5 border-r border-border-default flex items-center')}>
-              패키징 옵션
+          {/* 블루 인포박스 (Figma 246-63322) */}
+          {showInfobox && (
+            <div className="mx-4 my-3 flex items-start gap-2 px-4 py-3 rounded-lg bg-white border border-[#008fff]">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 mt-0.5" aria-hidden="true">
+                <circle cx="8" cy="8" r="6.5" stroke="#008fff" strokeWidth="1.5" />
+                <path d="M8 7v4" stroke="#008fff" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="8" cy="5.5" r=".75" fill="#008fff" />
+              </svg>
+              <p className="text-[14px] font-bold text-[#008fff] leading-5 tracking-[-0.3px]">
+                기본 패키지#1 에 포장되지 않은 상품은 수량을 0으로 표기 후, 패키지를 추가해 포장된 수량을 기입해주세요.
+              </p>
             </div>
-            <div className={cn(COL_PKG, 'px-3 py-2.5 border-r border-border-default flex items-center')}>
-              패키지 및 패키지 번호
-            </div>
-            <div className="flex-1 px-3 py-2.5 border-r border-border-default flex items-center">
-              패키지 내 상품 목록
-            </div>
-            <div className={cn(COL_QTY, 'px-3 py-2.5 flex items-center justify-center')}>
-              패키징 수량
-            </div>
-          </div>
+          )}
 
-          {/* 테이블 행 */}
-          {packages.map((pkg, pkgIdx) => {
-            const isOptionPkg = pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
-            // isPob 아이템의 "상위 제품" 참조명
-            // — option 패키지: qty=0인 비isPob 항목
-            // — 합포장: 첫 번째 비isPob 항목
-            const parentProduct = isOptionPkg
-              ? pkg.productList.find(p => !p.isPob && p.qty === 0)
-              : pkg.productList.find(p => !p.isPob)
+          {/* HTML table — 패키징 옵션 & 패키지 코드 rowSpan 적용 */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-bg-subtle">
+                  <th className="w-[160px] px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">
+                    패키징 옵션
+                  </th>
+                  <th className="w-[152px] px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">
+                    패키지 및 패키지 번호
+                  </th>
+                  <th className="px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">
+                    패키지 내 상품 목록
+                  </th>
+                  <th className="w-[200px] px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-center font-normal">
+                    패키징 수량
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {packages.map((pkg, pkgIdx) => {
+                  const isOptionPkg = pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
+                  const parentProduct = isOptionPkg
+                    ? pkg.productList.find(p => !p.isPob && p.qty === 0)
+                    : pkg.productList.find(p => !p.isPob)
 
-            return (
-              <div key={pkgIdx} className="flex items-stretch border-b border-border-default last:border-b-0">
-
-                {/* 패키징 옵션 (세로 전체 병합) */}
-                <div className={cn(
-                  COL_OPTION,
-                  'border-r border-border-default flex flex-col items-center justify-center px-3 py-3 text-center',
-                  pkg.packagingOption === '합포장'   && 'bg-[#ebf5fb]',
-                  pkg.packagingOption === '구성품만' && 'bg-[#f3eeff]',
-                  pkg.packagingOption === 'POB만'   && 'bg-[#fff0f5]',
-                )}>
-                  <p className="text-[13px] font-bold text-[#212529] leading-5">{pkg.packagingOption}</p>
-                  {/* 구성품만만 부가 텍스트 표시 (packageList에서 '구성품만' 제외한 항목) */}
-                  {pkg.packagingOption === '구성품만' &&
-                    pkg.packageList
-                      .filter(l => l !== '구성품만')
-                      .slice(0, 1)
-                      .map((l, i) => (
-                        <p key={i} className="text-[11px] text-[#868e96] mt-0.5 leading-4 break-keep">{l}</p>
-                      ))
-                  }
-                </div>
-
-                {/* 패키지 코드 (세로 전체 병합) */}
-                <div className={cn(COL_PKG, 'border-r border-border-default flex flex-col items-center justify-center px-3 py-3 text-center')}>
-                  <p className="text-[12px] font-bold text-fg-default font-mono leading-5">{pkg.packageCode}</p>
-                  <p className="text-[11px] text-fg-subtle leading-4">({pkg.packageAlias})</p>
-                </div>
-
-                {/* 상품 행들 */}
-                <div className="flex-1 flex flex-col min-w-0">
-                  {pkg.productList.map((product, prodIdx) => {
-                    const originalQty = product.qty          // 분홍색 고정값
+                  return pkg.productList.map((product, prodIdx) => {
+                    const isFirst    = prodIdx === 0
+                    const originalQty = product.qty
                     const currentQty  = qtys[pkgIdx]?.[prodIdx] ?? originalQty
                     const isZeroed    = isOptionPkg && !product.isPob && originalQty === 0
                     const badge       = getBadge(originalQty, currentQty)
 
                     return (
-                      <div key={prodIdx} className="flex items-stretch border-b border-border-default last:border-b-0">
+                      <tr key={`${pkgIdx}-${prodIdx}`}>
+                        {/* 패키징 옵션 — rowSpan per package */}
+                        {isFirst && (
+                          <td
+                            rowSpan={pkg.productList.length}
+                            className={cn(
+                              'w-[160px] border border-border-default px-3 py-3 text-center align-middle',
+                              pkg.packagingOption === '합포장'   && 'bg-[#ebf5fb]',
+                              pkg.packagingOption === '구성품만' && 'bg-[#f3eeff]',
+                              pkg.packagingOption === 'POB만'   && 'bg-[#fff0f5]',
+                            )}
+                          >
+                            <p className="text-[13px] font-bold text-[#212529] leading-5">{pkg.packagingOption}</p>
+                            {pkg.packagingOption === '구성품만' &&
+                              pkg.packageList
+                                .filter(l => l !== '구성품만')
+                                .slice(0, 1)
+                                .map((l, i) => (
+                                  <p key={i} className="text-[11px] text-[#868e96] mt-0.5 leading-4 break-keep">{l}</p>
+                                ))
+                            }
+                          </td>
+                        )}
+
+                        {/* 패키지 코드 — rowSpan per package */}
+                        {isFirst && (
+                          <td
+                            rowSpan={pkg.productList.length}
+                            className="w-[152px] border border-border-default px-3 py-3 text-center align-middle"
+                          >
+                            <p className="text-[12px] font-bold text-fg-default font-mono leading-5">{pkg.packageCode}</p>
+                            <p className="text-[11px] text-fg-subtle leading-4">({pkg.packageAlias})</p>
+                          </td>
+                        )}
 
                         {/* 상품 정보 셀 */}
-                        <div className="flex-1 px-4 py-3 border-r border-border-default flex flex-col justify-center gap-0.5 min-w-0">
-
-                          {/* isPob: 회색 상위 제품명 (12px) */}
-                          {product.isPob && parentProduct && (
-                            <p className="text-[12px] text-[#868e96] leading-4 truncate">
-                              {parentProduct.name}
-                            </p>
-                          )}
-
-                          {/* 상품명 + 고정 분홍 수량 */}
-                          <div className="flex items-baseline gap-1 flex-wrap text-[14px] leading-5 tracking-[-0.3px]">
-                            {product.isPob && (
-                              <span className="text-[#212529] shrink-0">•</span>
+                        <td className="border border-border-default px-4 py-3 align-middle">
+                          <div className="flex flex-col justify-center gap-0.5">
+                            {product.isPob && parentProduct && (
+                              <p className="text-[12px] text-[#868e96] leading-4 truncate">
+                                {parentProduct.name}
+                              </p>
                             )}
-                            <span className={cn(
-                              'text-[#212529]',
-                              product.isPob ? 'font-normal' : 'font-semibold',
-                            )}>
-                              {product.name}
-                            </span>
-                            {/* 분홍색 고정 수량 — NEVER CHANGES */}
-                            <span className="shrink-0 whitespace-nowrap">
-                              <span className="font-normal text-[#868e96]">/ </span>
-                              <span className="font-semibold text-[#ff558f]">{originalQty}개</span>
-                            </span>
-                            {/* 옵션 적용 전 수량 (회색) */}
-                            {isZeroed && product.preOptionQty != null && (
-                              <span className="text-[12px] text-[#868e96] shrink-0">
-                                ({product.preOptionQty}개)
+                            <div className="flex items-baseline gap-1 flex-wrap text-[14px] leading-5 tracking-[-0.3px]">
+                              {product.isPob && (
+                                <span className="text-[#212529] shrink-0">•</span>
+                              )}
+                              <span className={cn(
+                                'text-[#212529]',
+                                product.isPob ? 'font-normal' : 'font-semibold',
+                              )}>
+                                {product.name}
                               </span>
-                            )}
-                            {/* 뱃지: 분할 포장 or 요청 반영 or 미할당 */}
-                            {badge?.type === 'split' && (
-                              <Badge size="sm" type="round" color="yellow">
-                                ✂️ 분할 포장 / {badge.remaining}개 남음
-                              </Badge>
-                            )}
-                            {badge?.type === 'over' && (
-                              <Badge size="sm" type="round" color="green">
-                                요청 반영 / {badge.excess}개
-                              </Badge>
-                            )}
-                            {badge === null && currentQty === 0 && originalQty > 0 && (
-                              <Badge size="sm" type="round" color="yellow">미할당</Badge>
-                            )}
+                              <span className="shrink-0 whitespace-nowrap">
+                                <span className="font-normal text-[#868e96]">/ </span>
+                                <span className="font-semibold text-[#ff558f]">{originalQty}개</span>
+                              </span>
+                              {isZeroed && product.preOptionQty != null && (
+                                <span className="text-[12px] text-[#868e96] shrink-0">
+                                  ({product.preOptionQty}개)
+                                </span>
+                              )}
+                              {badge?.type === 'split' && (
+                                <Badge size="sm" type="round" color="yellow">
+                                  ✂️ 분할 포장 / {badge.remaining}개 남음
+                                </Badge>
+                              )}
+                              {badge?.type === 'over' && (
+                                <Badge size="sm" type="round" color="green">
+                                  요청 반영 / {badge.excess}개
+                                </Badge>
+                              )}
+                              {badge === null && currentQty === 0 && originalQty > 0 && (
+                                <Badge size="sm" type="round" color="yellow">미할당</Badge>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        </td>
 
                         {/* 포장 수량 입력 (200px) */}
-                        <div className={cn(COL_QTY, 'px-4 py-[14px] flex items-center justify-center')}>
+                        <td className="w-[200px] border border-border-default px-4 py-[14px] align-middle">
                           <input
                             type="number"
                             min={0}
@@ -537,14 +583,14 @@ function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTab
                             onChange={e => onUpdateQty(pkgIdx, prodIdx, e.target.value)}
                             className="w-full h-8 px-4 rounded-lg border border-[#dee2e6] bg-[#f8f9fa] text-[14px] text-[#212529] text-center focus:outline-none focus:border-border-accent-brand1-default transition-colors leading-5 tracking-[-0.3px]"
                           />
-                        </div>
-                      </div>
+                        </td>
+                      </tr>
                     )
-                  })}
-                </div>
-              </div>
-            )
-          })}
+                  })
+                })}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </div>
