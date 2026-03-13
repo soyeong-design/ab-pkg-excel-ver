@@ -385,16 +385,28 @@ export function PackagingListContent() {
 
                         {/* ── 패키지 내 상품 목록 ── */}
                         <td className={cn(TD, 'min-w-[260px]')}>
-                          {pkg.productList.map((prod, i) => (
-                            <div key={i} className="flex gap-1 items-baseline text-[13px] leading-5">
-                              <span className={cn('flex-1 min-w-0', prod.isPob ? 'text-fg-subtle' : 'text-fg-default')}>
-                                {prod.isPob ? '-' : '•'} {prod.name}
-                              </span>
-                              <span className="text-fg-accent-brand1-default shrink-0 whitespace-nowrap">
-                                / {prod.qty}개
-                              </span>
-                            </div>
-                          ))}
+                          {(() => {
+                            const isOptionPkg = pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
+                            return pkg.productList.map((prod, i) => {
+                              const isMainZeroed = isOptionPkg && !prod.isPob && prod.qty === 0
+                              return (
+                                <div key={i} className="flex gap-1 items-baseline text-[13px] leading-5 flex-wrap">
+                                  <span className={cn('min-w-0', prod.isPob ? 'text-fg-subtle' : 'text-fg-default')}>
+                                    {prod.isPob ? '-' : '•'} {prod.name}
+                                  </span>
+                                  <span className="shrink-0 whitespace-nowrap">
+                                    <span className="text-fg-subtle">/ </span>
+                                    <span className={cn('font-medium', prod.isPob ? 'text-fg-accent-brand1-default' : 'text-fg-accent-brand2-default')}>
+                                      {prod.qty}개
+                                    </span>
+                                    {isMainZeroed && prod.preOptionQty != null && (
+                                      <span className="text-fg-subtle ml-1">({prod.preOptionQty}개)</span>
+                                    )}
+                                  </span>
+                                </div>
+                              )
+                            })
+                          })()}
                         </td>
 
                         {/* ── 보관 장소 ── */}
