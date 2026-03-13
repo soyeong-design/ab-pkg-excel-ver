@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="h-screen overflow-hidden">
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" />
         <link
@@ -16,7 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-jp.min.css"
         />
       </head>
-      <body className="bg-bg-subtle text-fg-default antialiased">
+      <body className="h-screen overflow-hidden bg-bg-subtle text-fg-default antialiased">
         {children}
       </body>
     </html>

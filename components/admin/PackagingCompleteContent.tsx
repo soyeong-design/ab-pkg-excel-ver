@@ -288,14 +288,12 @@ export function PackagingCompleteContent({ request }: Props) {
                     </div>
                   </div>
                 )}
-                {/* 추가 요청사항 (구성품만 아닌 패키지) — 구성품만 존재 여부와 무관하게 항상 표시 */}
+                {/* 추가 요청사항 (구성품만 아닌 패키지) — 하나로 묶어서 표시 */}
                 {notePackages.length > 0 && (
                   <div className={cn('px-4 py-3', hasGumseongpum && 'border-t border-[#dee2e6]')}>
-                    {notePackages.map((p, i) => (
-                      <p key={i} className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
-                        추가 요청사항 / {p.userNote}
-                      </p>
-                    ))}
+                    <p className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
+                      추가 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}
+                    </p>
                   </div>
                 )}
               </div>
@@ -781,17 +779,14 @@ function ProductTable({ packages, getItemQty, totalAllocations, allPkgAllocation
                             ) : isPkgSplit ? (
                               <>
                                 <Badge size="sm" type="round" color="yellow">✂️ 분할 포장</Badge>
-                                {pkgBreakdown
-                                  .filter(p => p.label !== currentPkgLabel)
-                                  .map((p, i) => (
-                                    <Badge key={i} size="sm" type="round" color="yellow">
-                                      {p.label.replace(/^📦 /, '')} / {p.qty}개
-                                    </Badge>
-                                  ))
-                                }
+                                {pkgBreakdown.map((p, i) => (
+                                  <Badge key={i} size="sm" type="sq" color="yellow">
+                                    {p.label.replace(/^📦 /, '')} · {p.qty}개
+                                  </Badge>
+                                ))}
                                 {totalAllocated < originalQty && (
-                                  <Badge size="sm" type="round" color="yellow">
-                                    {originalQty - totalAllocated}개 미할당
+                                  <Badge size="sm" type="sq" color="yellow">
+                                    미할당 {originalQty - totalAllocated}개
                                   </Badge>
                                 )}
                               </>
