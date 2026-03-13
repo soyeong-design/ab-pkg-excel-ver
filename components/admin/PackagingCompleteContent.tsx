@@ -782,8 +782,8 @@ function ProductTable({ packages, getItemQty, totalAllocations, allPkgAllocation
                               </Badge>
                             ) : isPkgSplit ? (
                               <Badge size="sm" type="round" color="yellow">
-                                ✂️ 분할 포장 / {pkgBreakdown.map(p => `${p.label.replace(/^📦 /, '')} · ${p.qty}개`).join(' / ')}
-                                {totalAllocated < originalQty && ` / 미할당 ${originalQty - totalAllocated}개`}
+                                ✂️ 분할 포장 / {pkgBreakdown.map(p => `${p.label.replace(/^📦 /, '')} · ${p.qty}개`).join(' , ')}
+                                {totalAllocated < originalQty && ` / ${originalQty - totalAllocated}개 남음`}
                               </Badge>
                             ) : (
                               <>
