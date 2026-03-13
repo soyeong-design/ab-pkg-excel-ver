@@ -106,7 +106,7 @@ export function PackagingCompleteContent({ request }: Props) {
     }
   }
 
-  // 패키지 추가하기: 미할당/분할 항목만 추가
+  // 패키지 추가하기: 미할당/분할 항목은 qty=0으로 추가, 없으면 빈 패키지로 생성
   function handleAddPackage() {
     const newQtys: FlatQtys = {}
     request.packages.forEach((pkg, pkgIdx) => {
@@ -117,9 +117,7 @@ export function PackagingCompleteContent({ request }: Props) {
         }
       })
     })
-    if (Object.keys(newQtys).length > 0) {
-      setAddedPkgs(prev => [...prev, { id: Date.now(), qtys: newQtys }])
-    }
+    setAddedPkgs(prev => [...prev, { id: Date.now(), qtys: newQtys }])
   }
 
   // 추가 패키지 수량 변경
