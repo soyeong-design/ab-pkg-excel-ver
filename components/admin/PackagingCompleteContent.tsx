@@ -259,11 +259,11 @@ export function PackagingCompleteContent({ request }: Props) {
               </button>
             </div>
 
-            {/* 인포박스 — 구성품만(핑크) + userNote(회색) 각각 독립 표시 */}
+            {/* 인포박스 — 구성품만(핑크) + userNote */}
             {hasInnerInfo && (
               <div className="overflow-hidden rounded-b-[12px]">
                 {hasGumseongpum && (
-                  /* 핑크 인포박스 (구성품만 옵션 존재 시) */
+                  /* 핑크 인포박스 (구성품만 옵션 존재 시) — 구성품만 패키지 정보 + 전체 추가 요청사항 통합 */
                   <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
                       <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
@@ -284,13 +284,17 @@ export function PackagingCompleteContent({ request }: Props) {
                             </Fragment>
                           )
                         })}
+                        {/* 구성품만이 아닌 패키지의 추가 요청사항도 핑크 박스 안에 통합 */}
+                        {notePackages.length > 0 && (
+                          <p>추가 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}</p>
+                        )}
                       </div>
                     </div>
                   </div>
                 )}
-                {/* 추가 요청사항 (구성품만 아닌 패키지) — 하나로 묶어서 표시 */}
-                {notePackages.length > 0 && (
-                  <div className={cn('px-4 py-3', hasGumseongpum && 'border-t border-[#dee2e6]')}>
+                {/* 추가 요청사항 (구성품만 없을 때만 별도 표시) */}
+                {!hasGumseongpum && notePackages.length > 0 && (
+                  <div className="px-4 py-3">
                     <p className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
                       추가 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}
                     </p>
@@ -777,19 +781,10 @@ function ProductTable({ packages, getItemQty, totalAllocations, allPkgAllocation
                                 요청 반영 / {badge.excess}개
                               </Badge>
                             ) : isPkgSplit ? (
-                              <>
-                                <Badge size="sm" type="round" color="yellow">✂️ 분할 포장</Badge>
-                                {pkgBreakdown.map((p, i) => (
-                                  <Badge key={i} size="sm" type="sq" color="yellow">
-                                    {p.label.replace(/^📦 /, '')} · {p.qty}개
-                                  </Badge>
-                                ))}
-                                {totalAllocated < originalQty && (
-                                  <Badge size="sm" type="sq" color="yellow">
-                                    미할당 {originalQty - totalAllocated}개
-                                  </Badge>
-                                )}
-                              </>
+                              <Badge size="sm" type="round" color="yellow">
+                                ✂️ 분할 포장 / {pkgBreakdown.map(p => `${p.label.replace(/^📦 /, '')} · ${p.qty}개`).join(' / ')}
+                                {totalAllocated < originalQty && ` / 미할당 ${originalQty - totalAllocated}개`}
+                              </Badge>
                             ) : (
                               <>
                                 {badge?.type === 'split' && totalAllocated === 0 && originalQty > 0 && (
