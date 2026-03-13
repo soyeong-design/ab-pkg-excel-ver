@@ -12,36 +12,23 @@ interface Props {
   request: PackagingRequest
 }
 
-type BadgeInfo =
-  | { type: 'split'; remaining: number }
-  | { type: 'over'; excess: number }
-  | null
-
-function getBadge(originalQty: number, currentQty: number): BadgeInfo {
-  if (currentQty === originalQty) return null
-  if (currentQty < originalQty) return { type: 'split', remaining: originalQty - currentQty }
-  return { type: 'over', excess: currentQty - originalQty }
-}
-
-function isOptionZeroed(pkg: SubPackage, product: ProductItem): boolean {
-  return (
-    (pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만') &&
-    !product.isPob &&
-    product.qty === 0
-  )
-}
-
 interface PackageQtys {
   [pkgIndex: number]: number[]
 }
 
-// ─── ADM 테이블 스타일 행 컴포넌트 ─────────────────────────────────────────────
+// ─── ADM 테이블 스타일 행 ──────────────────────────────────────────────────────
 
-function AdmRow({ label, children, noBorder }: { label: string; children: React.ReactNode; noBorder?: boolean }) {
+function AdmRow({ label, required, children, noBorder }: {
+  label: string
+  required?: boolean
+  children: React.ReactNode
+  noBorder?: boolean
+}) {
   return (
     <div className={cn('flex items-stretch', !noBorder && 'border-b border-border-default')}>
-      <div className="w-[100px] shrink-0 bg-bg-subtle border-r border-border-default flex items-start px-4 py-4">
+      <div className="w-[100px] shrink-0 bg-bg-subtle border-r border-border-default flex items-start px-4 py-4 gap-1">
         <span className="text-label-bold-sm text-fg-default leading-5 break-keep">{label}</span>
+        {required && <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0 mt-1" />}
       </div>
       <div className="flex-1 px-4 py-3 bg-bg-default min-w-0">
         {children}
@@ -55,6 +42,7 @@ function AdmRow({ label, children, noBorder }: { label: string; children: React.
 export function PackagingCompleteContent({ request }: Props) {
   const router = useRouter()
 
+  // 각 패키지·상품의 포장 수량 state (초기값 = 요청 수량과 동일)
   const [qtys, setQtys] = useState<PackageQtys>(() =>
     Object.fromEntries(request.packages.map((pkg, i) => [i, pkg.productList.map(p => p.qty)]))
   )
@@ -72,12 +60,12 @@ export function PackagingCompleteContent({ request }: Props) {
     }
   }
 
-  // 구성품만 / POB만 옵션이 있는 패키지 목록 (infobox 표시용)
+  // 구성품만 / POB만 옵션 패키지 → 핑크 infobox
   const optionPackages = request.packages.filter(
     pkg => pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
   )
 
-  // 미할당 상품 존재 여부 (qty가 0인데 원본은 0보다 큰 경우)
+  // 미할당 여부: 현재 포장 수량이 0이지만 원본 요청 수량이 0보다 큰 경우
   const hasUnassigned = request.packages.some((pkg, pkgIdx) =>
     pkg.productList.some((p, prodIdx) => {
       const cur = qtys[pkgIdx]?.[prodIdx] ?? p.qty
@@ -106,34 +94,30 @@ export function PackagingCompleteContent({ request }: Props) {
 
         {/* ── 패키징 기본 정보 입력 ── */}
         <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
-          {/* 카드 헤더 */}
           <div className="px-4 py-3 border-b border-border-default">
             <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">패키징 기본 정보 입력</h2>
           </div>
-
-          {/* 패키지 ID 서브 헤더 */}
           <div className="px-4 py-2 bg-bg-subtle border-b border-border-default">
             <span className="text-label-bold-sm text-fg-accent-brand1-default">{request.requestId}</span>
           </div>
 
-          {/* 이미지 / 비디오 업로드 (2열) */}
+          {/* 이미지 / 비디오 업로드 */}
           <div className="flex border-b border-border-default">
             <div className="flex-1 flex flex-col border-r border-border-default">
               <div className="bg-bg-subtle border-b border-border-default px-4 py-3">
                 <span className="text-label-bold-sm text-fg-default">이미지 업로드</span>
               </div>
-              <UploadArea label="여기로 파일을 드래그하거나 업로드하세요." />
+              <UploadArea />
             </div>
             <div className="flex-1 flex flex-col">
               <div className="bg-bg-subtle border-b border-border-default px-4 py-3 flex items-center gap-2">
                 <span className="text-label-bold-sm text-fg-default">비디오 업로드</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
               </div>
-              <UploadArea label="여기로 파일을 드래그하거나 업로드하세요." />
+              <UploadArea />
             </div>
           </div>
 
-          {/* 매입 앨범 수량 */}
           <AdmRow label="매입 앨범 수량">
             <input
               value={albumQty}
@@ -142,8 +126,6 @@ export function PackagingCompleteContent({ request }: Props) {
               className="w-full h-10 px-4 rounded-lg border border-border-default bg-bg-subtle text-body-regular-md text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-accent-brand1-default"
             />
           </AdmRow>
-
-          {/* 유저 안내 메세지 */}
           <AdmRow label="유저 안내 메세지">
             <input
               value={userMessage}
@@ -152,8 +134,6 @@ export function PackagingCompleteContent({ request }: Props) {
               className="w-full h-10 px-4 rounded-lg border border-border-default bg-bg-subtle text-body-regular-md text-fg-default placeholder:text-fg-subtlest focus:outline-none focus:border-border-accent-brand1-default"
             />
           </AdmRow>
-
-          {/* 관리자 기록용 메모 */}
           <AdmRow label="관리자 기록용 메모" noBorder>
             <textarea
               value={adminMemo}
@@ -167,7 +147,7 @@ export function PackagingCompleteContent({ request }: Props) {
 
         {/* ── 작업 정보 입력 ── */}
         <div className="space-y-3">
-          {/* 작업 정보 헤더 */}
+          {/* 헤더 + 구성품만/POB만 infobox */}
           <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
               <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">작업 정보 입력</h2>
@@ -178,8 +158,6 @@ export function PackagingCompleteContent({ request }: Props) {
                 패키지 추가하기
               </button>
             </div>
-
-            {/* 구성품만 / POB만 옵션 infobox */}
             {optionPackages.map((pkg, i) => (
               <div key={i} className="flex items-start gap-3 px-4 py-3 bg-bg-accent-brand1-subtlest border-b border-border-accent-brand1-subtlest last:border-b-0">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-brand1-default shrink-0 mt-0.5" aria-hidden="true">
@@ -200,7 +178,7 @@ export function PackagingCompleteContent({ request }: Props) {
             ))}
           </div>
 
-          {/* 📦 기본 패키지 카드 */}
+          {/* 📦 기본 패키지 #1 카드 */}
           <PackageWorkCard
             packages={request.packages}
             qtys={qtys}
@@ -227,7 +205,7 @@ export function PackagingCompleteContent({ request }: Props) {
 
 // ─── 파일 업로드 영역 ──────────────────────────────────────────────────────────
 
-function UploadArea({ label }: { label: string }) {
+function UploadArea() {
   return (
     <div className="flex items-center gap-3 p-4 min-h-[120px]">
       <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-border-default bg-bg-default hover:bg-bg-subtle transition-colors shrink-0">
@@ -258,100 +236,112 @@ interface PackageWorkCardProps {
 function PackageWorkCard({ packages, qtys, hasUnassigned, onUpdateQty }: PackageWorkCardProps) {
   return (
     <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
-      {/* 카드 헤더 */}
+      {/* ── 📦 기본 패키지 #1 헤더 ── */}
       <div className="px-4 py-3 bg-bg-subtle border-b border-border-default">
         <span className="text-body-bold-md text-fg-default">📦 기본 패키지 #1</span>
       </div>
 
-      {/* 패키지 번호 정보 행 */}
-      <div className="flex items-center gap-3 px-4 py-3 bg-bg-default border-b border-border-default">
-        <span className="text-label-bold-sm text-fg-default">📦 패키지 #1 번호</span>
-        <span className="w-px h-4 bg-border-default" />
-        <span className="text-label-sm text-fg-subtle font-mono">
-          {packages[0]?.packageCode ?? '—'} ({packages[0]?.packageAlias ?? '—'})
-        </span>
-      </div>
+      {/* ── 입력 폼: 3열 × 2행 ── */}
+      <PackageInputForm />
 
-      {/* 미할당 경고 */}
-      {hasUnassigned && (
-        <div className="flex items-start gap-3 mx-4 my-3 px-4 py-3 rounded-lg bg-bg-accent-yellow-subtlest border border-border-accent-yellow-subtlest">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-yellow-default shrink-0 mt-0.5" aria-hidden="true">
-            <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-            <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="8" cy="11" r=".75" fill="currentColor" />
-          </svg>
-          <p className="text-body-regular-sm text-fg-accent-yellow-default">
-            미할당 상품이 포함된 패키지가 있습니다. 아래 해당하는 상품 수량을 배분해 주세요.
-          </p>
-        </div>
-      )}
-
-      {/* 패키지 입력 정보 */}
-      <PackageInfoSection />
-
-      {/* 패키지 내 상품 목록 테이블 */}
+      {/* ── 패키지 내 상품 목록 ── */}
       <ProductTable
         packages={packages}
         qtys={qtys}
+        hasUnassigned={hasUnassigned}
         onUpdateQty={onUpdateQty}
       />
     </div>
   )
 }
 
-// ─── 박스번호·봉투·파킹 등 입력 섹션 ──────────────────────────────────────────
+// ─── 패키지 정보 입력 폼 (Figma 246:63293 + 246:63306) ────────────────────────
 
-function PackageInfoSection() {
-  const [boxNum, setBoxNum] = useState('')
-  const [leftRight, setLeftRight] = useState('')
-  const [itemCount, setItemCount] = useState('')
-  const [sizeInfo, setSizeInfo] = useState('')
-  const [parkingQty, setParkingQty] = useState('')
-  const [envelopeQty, setEnvelopeQty] = useState('1')
-  const [boxQty, setBoxQty] = useState('')
+function PackageInputForm() {
+  const [storageLocation, setStorageLocation] = useState('')
+  const [weight, setWeight] = useState('')
+  const [repackaging, setRepackaging] = useState('')
+  const [width, setWidth] = useState('')
+  const [depth, setDepth] = useState('')
+  const [length, setLength] = useState('')
 
-  const inputCls = 'flex-1 h-9 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default'
-  const labelCls = 'text-label-sm text-fg-subtle shrink-0'
+  // 100px 라벨 + 나머지 인풋, Figma ADM Table 스타일
+  const labelCls = 'w-[100px] shrink-0 bg-bg-subtle border-r border-border-default px-4 flex items-center gap-1'
+  const inputCls = 'w-full h-10 px-4 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default'
 
   return (
-    <div className="p-4 border-b border-border-default space-y-3">
-      <div className="grid grid-cols-3 gap-3">
-        <div className="flex items-center gap-2">
-          <span className={cn(labelCls, 'w-14')}>박스번호</span>
-          <input value={boxNum} onChange={e => setBoxNum(e.target.value)} className={inputCls} />
+    <>
+      {/* 행 1: 보관장소 | 무게(g) | 리패키징 여부 */}
+      <div className="flex border-b border-border-default">
+        {/* 보관장소 */}
+        <div className="flex flex-1 border-r border-border-default">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">보관장소</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <input value={storageLocation} onChange={e => setStorageLocation(e.target.value)}
+              placeholder="보관장소" className={inputCls} />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={cn(labelCls, 'w-10')}>우/좌등</span>
-          <input value={leftRight} onChange={e => setLeftRight(e.target.value)} className={inputCls} />
+        {/* 무게 */}
+        <div className="flex flex-1 border-r border-border-default">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">무게(g)</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <input value={weight} onChange={e => setWeight(e.target.value)}
+              placeholder="g" className={inputCls} />
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className={cn(labelCls, 'w-16')}>파악정보 수량</span>
-          <input value={itemCount} onChange={e => setItemCount(e.target.value)} className={inputCls} />
+        {/* 리패키징 여부 */}
+        <div className="flex flex-1">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">리패키징 여부</span>
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <select value={repackaging} onChange={e => setRepackaging(e.target.value)}
+              className="w-full h-10 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default appearance-none cursor-pointer">
+              <option value="">선택</option>
+              <option value="필요">리패키징 필요</option>
+              <option value="불필요">리패키징 불필요</option>
+            </select>
+          </div>
         </div>
       </div>
-      <div className="flex items-center gap-2">
-        <span className={cn(labelCls, 'w-16')}>사이즈 정보</span>
-        <input value={sizeInfo} onChange={e => setSizeInfo(e.target.value)}
-          className="flex-1 h-9 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none focus:border-border-accent-brand1-default" />
+
+      {/* 행 2: 가로(cm) | 세로(cm) | 길이(cm) */}
+      <div className="flex border-b border-border-default">
+        <div className="flex flex-1 border-r border-border-default">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">가로(cm)</span>
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <input value={width} onChange={e => setWidth(e.target.value)}
+              placeholder="w" className={inputCls} />
+          </div>
+        </div>
+        <div className="flex flex-1 border-r border-border-default">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">세로(cm)</span>
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <input value={depth} onChange={e => setDepth(e.target.value)}
+              placeholder="h" className={inputCls} />
+          </div>
+        </div>
+        <div className="flex flex-1">
+          <div className={labelCls}>
+            <span className="text-label-bold-sm text-fg-default whitespace-nowrap">길이(cm)</span>
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <input value={length} onChange={e => setLength(e.target.value)}
+              placeholder="l" className={inputCls} />
+          </div>
+        </div>
       </div>
-      <div className="flex items-center gap-6 flex-wrap">
-        <div className="flex items-center gap-2">
-          <span className={labelCls}>파킹(선)</span>
-          <input value={parkingQty} onChange={e => setParkingQty(e.target.value)}
-            className="w-16 h-9 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none" />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={labelCls}>봉투(선)</span>
-          <input value={envelopeQty} onChange={e => setEnvelopeQty(e.target.value)}
-            className="w-16 h-9 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none" />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={labelCls}>박스(선)</span>
-          <input value={boxQty} onChange={e => setBoxQty(e.target.value)}
-            className="w-16 h-9 px-3 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default focus:outline-none" />
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
 
@@ -360,20 +350,26 @@ function PackageInfoSection() {
 interface ProductTableProps {
   packages: SubPackage[]
   qtys: PackageQtys
+  hasUnassigned: boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
 }
 
-function ProductTable({ packages, qtys, onUpdateQty }: ProductTableProps) {
+function ProductTable({ packages, qtys, hasUnassigned, onUpdateQty }: ProductTableProps) {
   const [collapsed, setCollapsed] = useState(false)
+
+  // 컬럼 너비 (Figma 246:63245 기준)
+  const COL_OPTION  = 'w-[160px] shrink-0'
+  const COL_PKG     = 'w-[152px] shrink-0'
+  const COL_QTY     = 'w-[200px] shrink-0'
 
   return (
     <div>
-      {/* Section header */}
+      {/* 섹션 헤더 (접기/펼치기) */}
       <button
         onClick={() => setCollapsed(v => !v)}
         className="w-full flex items-center justify-between px-4 py-3 bg-bg-subtle border-b border-border-default hover:bg-bg-subtle/80 transition-colors"
       >
-        <span className="text-body-bold-md text-fg-default">패키지 내 상품 목록</span>
+        <span className="text-body-bold-md text-fg-default">패키지 내 상품 정보</span>
         <svg
           width="16" height="16" viewBox="0 0 16 16" fill="none"
           className={cn('text-fg-subtle transition-transform', collapsed && 'rotate-180')}
@@ -385,89 +381,112 @@ function ProductTable({ packages, qtys, onUpdateQty }: ProductTableProps) {
 
       {!collapsed && (
         <>
-          {/* Table header */}
+          {/* 미할당 경고 */}
+          {hasUnassigned && (
+            <div className="mx-4 my-3 flex items-start gap-3 px-4 py-3 rounded-lg bg-bg-accent-yellow-subtlest border border-border-accent-yellow-subtlest">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-yellow-default shrink-0 mt-0.5" aria-hidden="true">
+                <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="8" cy="11" r=".75" fill="currentColor" />
+              </svg>
+              <p className="text-body-regular-sm text-fg-accent-yellow-default leading-5">
+                기본 패키지 #1에 포장되지 않은 상품의 수량을 0으로 표기 후, 패키지를 추가해 포장된 수량의 합이 기대값에 도달하세요.
+              </p>
+            </div>
+          )}
+
+          {/* 테이블 헤더 */}
           <div className="flex items-stretch border-b border-border-default bg-bg-subtle text-label-md text-fg-subtle">
-            <div className="w-[110px] shrink-0 px-3 py-2 border-r border-border-default flex items-center">패키지 옵션</div>
-            <div className="w-[140px] shrink-0 px-3 py-2 border-r border-border-default flex items-center">패키지 및 패키지 번호</div>
-            <div className="flex-1 px-3 py-2 border-r border-border-default flex items-center">패키지 내 상품 목록</div>
-            <div className="w-[120px] shrink-0 px-3 py-2 flex items-center justify-center">포장 수량</div>
+            <div className={cn(COL_OPTION, 'px-3 py-2.5 border-r border-border-default flex items-center')}>
+              패키징 옵션
+            </div>
+            <div className={cn(COL_PKG, 'px-3 py-2.5 border-r border-border-default flex items-center')}>
+              패키지 및 패키지 번호
+            </div>
+            <div className="flex-1 px-3 py-2.5 border-r border-border-default flex items-center">
+              패키지 내 상품 목록
+            </div>
+            <div className={cn(COL_QTY, 'px-3 py-2.5 flex items-center justify-center')}>
+              패키징 수량
+            </div>
           </div>
 
-          {/* Rows */}
+          {/* 테이블 행 */}
           {packages.map((pkg, pkgIdx) => {
             const isOptionPkg = pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
-            const mainIdx = isOptionPkg
-              ? pkg.productList.findIndex(p => p.qty === 0 && !p.isPob)
-              : -1
-            const mainProduct = mainIdx >= 0 ? pkg.productList[mainIdx] : null
-            const orderedIndices = isOptionPkg && mainIdx >= 0
-              ? [mainIdx, ...pkg.productList.map((_, i) => i).filter(i => i !== mainIdx)]
-              : pkg.productList.map((_, i) => i)
+            // isPob 아이템의 "상위 제품" 참조명
+            // — option 패키지: qty=0인 비isPob 항목
+            // — 합포장: 첫 번째 비isPob 항목
+            const parentProduct = isOptionPkg
+              ? pkg.productList.find(p => !p.isPob && p.qty === 0)
+              : pkg.productList.find(p => !p.isPob)
 
             return (
               <div key={pkgIdx} className="flex items-stretch border-b border-border-default last:border-b-0">
-                {/* 패키지 옵션 */}
+
+                {/* 패키징 옵션 (세로 전체 병합) */}
                 <div className={cn(
-                  'w-[110px] shrink-0 border-r border-border-default flex flex-col items-center justify-center px-2 py-3 text-center',
+                  COL_OPTION,
+                  'border-r border-border-default flex flex-col items-center justify-center px-3 py-3 text-center',
                   pkg.packagingOption === '구성품만' && 'bg-bg-accent-brand2-subtlest',
-                  pkg.packagingOption === 'POB만' && 'bg-bg-accent-brand1-subtlest',
+                  pkg.packagingOption === 'POB만'   && 'bg-bg-accent-brand1-subtlest',
                 )}>
-                  <p className="text-body-bold-sm text-fg-default">{pkg.packagingOption}</p>
+                  <p className="text-[13px] font-bold text-fg-default leading-5">{pkg.packagingOption}</p>
                   {pkg.packageList.filter(l => l !== pkg.packagingOption).slice(0, 1).map((l, i) => (
-                    <p key={i} className="text-label-sm text-fg-subtle mt-0.5 leading-tight">{l}</p>
+                    <p key={i} className="text-[11px] text-fg-subtle mt-0.5 leading-4">{l}</p>
                   ))}
                 </div>
 
-                {/* 패키지 코드 */}
-                <div className="w-[140px] shrink-0 border-r border-border-default flex flex-col items-center justify-center px-2 py-3 text-center">
-                  <p className="text-body-bold-sm text-fg-default font-mono">{pkg.packageCode}</p>
-                  <p className="text-label-sm text-fg-subtle">({pkg.packageAlias})</p>
+                {/* 패키지 코드 (세로 전체 병합) */}
+                <div className={cn(COL_PKG, 'border-r border-border-default flex flex-col items-center justify-center px-3 py-3 text-center')}>
+                  <p className="text-[12px] font-bold text-fg-default font-mono leading-5">{pkg.packageCode}</p>
+                  <p className="text-[11px] text-fg-subtle leading-4">({pkg.packageAlias})</p>
                 </div>
 
                 {/* 상품 행들 */}
-                <div className="flex-1 flex flex-col">
-                  {orderedIndices.map(prodIdx => {
-                    const product = pkg.productList[prodIdx]
-                    const currentQty = qtys[pkgIdx]?.[prodIdx] ?? product.qty
-                    const badge = getBadge(product.qty, currentQty)
-                    const zeroed = isOptionZeroed(pkg, product)
-                    const isSub = isOptionPkg && prodIdx !== mainIdx
+                <div className="flex-1 flex flex-col min-w-0">
+                  {pkg.productList.map((product, prodIdx) => {
+                    const originalQty = product.qty          // 분홍색 고정값
+                    const currentQty  = qtys[pkgIdx]?.[prodIdx] ?? originalQty
+                    const isZeroed    = isOptionPkg && !product.isPob && originalQty === 0
+                    const badge       = getBadge(originalQty, currentQty)
 
                     return (
-                      <div
-                        key={prodIdx}
-                        className="flex items-stretch border-b border-border-default last:border-b-0"
-                      >
-                        {/* 상품명 + qty */}
-                        <div className="flex-1 px-3 py-2.5 border-r border-border-default flex flex-col justify-center gap-0.5 min-w-0">
-                          {isSub && mainProduct && (
-                            <p className="text-label-sm text-fg-subtle truncate leading-tight">{mainProduct.name}</p>
+                      <div key={prodIdx} className="flex items-stretch border-b border-border-default last:border-b-0">
+
+                        {/* 상품 정보 셀 */}
+                        <div className="flex-1 px-4 py-3 border-r border-border-default flex flex-col justify-center gap-0.5 min-w-0">
+
+                          {/* isPob: 회색 상위 제품명 (12px) */}
+                          {product.isPob && parentProduct && (
+                            <p className="text-[12px] text-[#868e96] leading-4 truncate">
+                              {parentProduct.name}
+                            </p>
                           )}
-                          <div className="flex items-center gap-1 flex-wrap">
-                            {isSub && <span className="text-body-regular-sm text-fg-subtle shrink-0">•</span>}
-                            {product.isPob && !isSub && <Badge size="sm" color="brand1">POB</Badge>}
+
+                          {/* 상품명 + 고정 분홍 수량 */}
+                          <div className="flex items-baseline gap-1 flex-wrap text-[14px] leading-5 tracking-[-0.3px]">
+                            {product.isPob && (
+                              <span className="text-[#212529] shrink-0">•</span>
+                            )}
                             <span className={cn(
-                              'text-body-regular-sm text-fg-default',
-                              !isSub && 'font-semibold',
+                              'text-[#212529]',
+                              product.isPob ? 'font-normal' : 'font-semibold',
                             )}>
                               {product.name}
                             </span>
-                            <span className="text-body-regular-sm shrink-0">
-                              <span className="text-fg-subtle">{'/ '}</span>
-                              <span className={cn(
-                                'font-semibold',
-                                isSub || product.isPob
-                                  ? 'text-fg-accent-brand1-default'
-                                  : 'text-fg-accent-brand2-default',
-                              )}>
-                                {currentQty}개
-                              </span>
+                            {/* 분홍색 고정 수량 — NEVER CHANGES */}
+                            <span className="shrink-0 whitespace-nowrap">
+                              <span className="font-normal text-[#868e96]">/ </span>
+                              <span className="font-semibold text-[#ff558f]">{originalQty}개</span>
                             </span>
-                            {zeroed && product.preOptionQty != null && (
-                              <span className="text-body-regular-sm text-fg-subtle shrink-0">
+                            {/* 옵션 적용 전 수량 (회색) */}
+                            {isZeroed && product.preOptionQty != null && (
+                              <span className="text-[12px] text-[#868e96] shrink-0">
                                 ({product.preOptionQty}개)
                               </span>
                             )}
+                            {/* 뱃지: 분할 포장 or 요청 반영 or 미할당 */}
                             {badge?.type === 'split' && (
                               <Badge size="sm" type="round" color="yellow">
                                 ✂️ 분할 포장 / {badge.remaining}개 남음
@@ -478,20 +497,20 @@ function ProductTable({ packages, qtys, onUpdateQty }: ProductTableProps) {
                                 요청 반영 / {badge.excess}개
                               </Badge>
                             )}
-                            {badge === null && currentQty === 0 && product.qty > 0 && (
+                            {badge === null && currentQty === 0 && originalQty > 0 && (
                               <Badge size="sm" type="round" color="yellow">미할당</Badge>
                             )}
                           </div>
                         </div>
 
-                        {/* 포장 수량 입력 */}
-                        <div className="w-[120px] shrink-0 px-3 py-2 flex items-center justify-center">
+                        {/* 포장 수량 입력 (200px) */}
+                        <div className={cn(COL_QTY, 'px-4 py-[14px] flex items-center justify-center')}>
                           <input
                             type="number"
                             min={0}
                             value={currentQty}
                             onChange={e => onUpdateQty(pkgIdx, prodIdx, e.target.value)}
-                            className="w-full h-8 px-2 rounded-lg border border-border-default bg-bg-subtle text-body-regular-sm text-fg-default text-center focus:outline-none focus:border-border-accent-brand1-default transition-colors"
+                            className="w-full h-8 px-4 rounded-lg border border-[#dee2e6] bg-[#f8f9fa] text-[14px] text-[#212529] text-center focus:outline-none focus:border-border-accent-brand1-default transition-colors leading-5 tracking-[-0.3px]"
                           />
                         </div>
                       </div>
@@ -505,4 +524,17 @@ function ProductTable({ packages, qtys, onUpdateQty }: ProductTableProps) {
       )}
     </div>
   )
+}
+
+// ─── 뱃지 계산 ────────────────────────────────────────────────────────────────
+
+type BadgeInfo =
+  | { type: 'split'; remaining: number }
+  | { type: 'over'; excess: number }
+  | null
+
+function getBadge(originalQty: number, currentQty: number): BadgeInfo {
+  if (currentQty === originalQty) return null
+  if (currentQty < originalQty) return { type: 'split', remaining: originalQty - currentQty }
+  return { type: 'over', excess: currentQty - originalQty }
 }
