@@ -34,7 +34,7 @@ function AdmRow({ label, required, children, noBorder }: {
 }) {
   return (
     <div className={cn('flex items-stretch', !noBorder && 'border-b border-border-default')}>
-      <div className="w-[100px] shrink-0 bg-bg-subtle border-r border-border-default flex items-start px-4 py-4 gap-1">
+      <div className="w-[100px] shrink-0 bg-[#f8f9fa] border-r border-[#e9ecef] flex items-start px-4 py-4 gap-1">
         <span className="text-label-bold-sm text-fg-default leading-5 break-keep">{label}</span>
         {required && <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0 mt-1" />}
       </div>
@@ -154,27 +154,28 @@ export function PackagingCompleteContent({ request }: Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-6 py-5 space-y-4 max-w-[1240px] mx-auto">
 
         {/* ── 패키징 기본 정보 입력 ── */}
         <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
           <div className="px-4 py-3 border-b border-border-default">
             <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">패키징 기본 정보 입력</h2>
           </div>
-          <div className="px-4 py-2 bg-bg-subtle border-b border-border-default">
+          <div className="px-4 py-2 bg-[#f8f9fa] border-b border-[#dee2e6]">
             <span className="text-label-bold-sm text-fg-accent-brand1-default">{request.requestId}</span>
           </div>
 
           {/* 이미지 / 비디오 업로드 */}
           <div className="flex border-b border-border-default">
             <div className="flex-1 flex flex-col border-r border-border-default">
-              <div className="bg-bg-subtle border-b border-border-default px-4 py-3 flex items-center min-h-[48px]">
+              <div className="bg-[#f8f9fa] border-b border-[#dee2e6] px-4 py-3 flex items-center min-h-[48px]">
                 <span className="text-label-bold-sm text-fg-default">이미지 업로드</span>
               </div>
               <UploadArea />
             </div>
             <div className="flex-1 flex flex-col">
-              <div className="bg-bg-subtle border-b border-border-default px-4 py-3 flex items-center gap-2 min-h-[48px]">
+              <div className="bg-[#f8f9fa] border-b border-[#dee2e6] px-4 py-3 flex items-center gap-2 min-h-[48px]">
                 <span className="text-label-bold-sm text-fg-default">비디오 업로드</span>
                 <span className="w-1.5 h-1.5 rounded-full bg-fg-accent-brand1-default shrink-0" />
               </div>
@@ -211,39 +212,43 @@ export function PackagingCompleteContent({ request }: Props) {
 
         {/* ── 작업 정보 입력 ── */}
         <div className="space-y-3">
-          {/* 헤더 + 구성품만/POB만 infobox */}
-          <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border-default">
-              <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">작업 정보 입력</h2>
-              <button
-                onClick={handleAddPackage}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border-default bg-bg-default text-label-md text-fg-default hover:bg-bg-subtle transition-colors"
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                패키지 추가하기
-              </button>
-            </div>
-            {optionPackages.map((pkg, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-3 bg-bg-accent-brand1-subtlest border-b border-border-accent-brand1-subtlest last:border-b-0">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-brand1-default shrink-0 mt-0.5" aria-hidden="true">
-                  <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <circle cx="8" cy="11" r=".75" fill="currentColor" />
-                </svg>
-                <div className="min-w-0">
-                  <p className="text-label-bold-sm text-fg-accent-brand1-default">
-                    {pkg.packagingOption} 옵션이 포함된 패키지입니다
-                  </p>
-                  <p className="text-label-sm text-fg-subtle mt-0.5">
-                    {pkg.packageList.join(' / ')}
-                    {pkg.userNote ? ` / 추가 요청사항 / ${pkg.userNote}` : ''}
-                  </p>
-                </div>
-              </div>
-            ))}
+          {/* 헤더 (sticky) */}
+          <div className="sticky top-0 z-10 bg-bg-default rounded-xl border border-border-default flex items-center justify-between px-4 py-3">
+            <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">작업 정보 입력</h2>
+            <button
+              onClick={handleAddPackage}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border-default bg-bg-default text-label-md text-fg-default hover:bg-bg-subtle transition-colors"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              패키지 추가하기
+            </button>
           </div>
+
+          {/* 구성품만/POB만 infobox */}
+          {optionPackages.length > 0 && (
+            <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
+              {optionPackages.map((pkg, i) => (
+                <div key={i} className="flex items-start gap-3 px-4 py-3 bg-bg-accent-brand1-subtlest border-b border-border-accent-brand1-subtlest last:border-b-0">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-brand1-default shrink-0 mt-0.5" aria-hidden="true">
+                    <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                    <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="8" cy="11" r=".75" fill="currentColor" />
+                  </svg>
+                  <div className="min-w-0">
+                    <p className="text-label-bold-sm text-fg-accent-brand1-default">
+                      {pkg.packagingOption} 옵션이 포함된 패키지입니다
+                    </p>
+                    <p className="text-label-sm text-fg-subtle mt-0.5">
+                      {pkg.packageList.join(' / ')}
+                      {pkg.userNote ? ` / 추가 요청사항 / ${pkg.userNote}` : ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* 📦 기본 패키지 #1 카드 */}
           <PackageWorkCard
@@ -269,6 +274,8 @@ export function PackagingCompleteContent({ request }: Props) {
               onDelete={() => setDeleteTarget({ id: ap.id, label: `추가 패키지 #${idx + 2}` })}
             />
           ))}
+        </div>
+
         </div>
       </div>
 
@@ -437,7 +444,7 @@ function PackageInputForm() {
         </div>
         {/* 리패키징 여부 — 체크박스 (Figma 246-63302) */}
         <div className="flex flex-1">
-          <div className="w-[100px] shrink-0 bg-bg-subtle border-r border-[#e9ecef] px-4 flex items-center min-h-[56px]">
+          <div className="w-[100px] shrink-0 bg-[#f8f9fa] border-r border-[#e9ecef] px-4 flex items-center min-h-[56px]">
             <span className="text-[14px] font-semibold text-[#212529] leading-5 tracking-[-0.3px] break-keep">
               리패키징<br />여부
             </span>
@@ -527,7 +534,7 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
       {/* 섹션 헤더 (접기/펼치기) */}
       <button
         onClick={() => setCollapsed(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-bg-subtle border-b border-border-default hover:bg-bg-subtle/80 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 bg-[#f8f9fa] border-b border-[#dee2e6] hover:bg-[#f1f3f5] transition-colors"
       >
         <span className="text-body-bold-md text-fg-default">패키지 내 상품 정보</span>
         <svg
@@ -559,7 +566,7 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr className="bg-bg-subtle">
+                <tr className="bg-[#f8f9fa]">
                   <th className="w-[160px] px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">패키징 옵션</th>
                   <th className="w-[152px] px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">패키지 및 패키지 번호</th>
                   <th className="px-3 py-2.5 border border-border-default text-label-md text-fg-subtle text-left font-normal">패키지 내 상품 목록</th>
