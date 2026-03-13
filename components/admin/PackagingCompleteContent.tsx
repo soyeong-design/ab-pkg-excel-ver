@@ -24,6 +24,11 @@ interface AddedPkg {
   qtys: FlatQtys
 }
 
+interface PkgAllocationEntry {
+  label: string
+  getQty: (pkgIdx: number, prodIdx: number) => number
+}
+
 // ─── ADM 테이블 스타일 행 ──────────────────────────────────────────────────────
 
 function AdmRow({ label, required, children, noBorder }: {
@@ -137,12 +142,24 @@ export function PackagingCompleteContent({ request }: Props) {
   )
   const hasGumseongpum = gumseongpumPkgs.length > 0
 
-  // 구성품만 없을 때 표시할 userNote 목록 (회색 텍스트)
+  // 구성품만이 아닌 패키지의 userNote (구성품만 존재 여부와 무관하게 항상 표시)
   const notePackages = useMemo(
-    () => (!hasGumseongpum ? request.packages.filter(p => p.userNote) : []),
-    [hasGumseongpum, request.packages],
+    () => request.packages.filter(p => p.packagingOption !== '구성품만' && p.userNote),
+    [request.packages],
   )
   const hasInnerInfo = hasGumseongpum || notePackages.length > 0
+
+  // 전체 패키지 할당 정보 (분할포장 뱃지용)
+  const allPkgAllocations = useMemo<PkgAllocationEntry[]>(() => [
+    {
+      label: '📦 기본 패키지 #1',
+      getQty: (pkgIdx: number, prodIdx: number) => qtys[pkgIdx]?.[prodIdx] ?? 0,
+    },
+    ...addedPkgs.map((ap: AddedPkg, idx: number) => ({
+      label: `📦 추가 패키지 #${idx + 2}`,
+      getQty: (pkgIdx: number, prodIdx: number) => ap.qtys[`${pkgIdx}-${prodIdx}`] ?? 0,
+    })),
+  ], [qtys, addedPkgs])
 
   return (
     <>
@@ -242,10 +259,10 @@ export function PackagingCompleteContent({ request }: Props) {
               </button>
             </div>
 
-            {/* 인포박스 — 구성품만 있을 때: 핑크 / 없고 userNote 있을 때: 회색 */}
+            {/* 인포박스 — 구성품만(핑크) + userNote(회색) 각각 독립 표시 */}
             {hasInnerInfo && (
               <div className="overflow-hidden rounded-b-[12px]">
-                {hasGumseongpum ? (
+                {hasGumseongpum && (
                   /* 핑크 인포박스 (구성품만 옵션 존재 시) */
                   <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
@@ -257,22 +274,26 @@ export function PackagingCompleteContent({ request }: Props) {
                       <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
                         구성품만 옵션이 포함된 패키지입니다
                       </p>
-                      <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
-                        {gumseongpumPkgs.map((p, i) => (
-                          <p key={i}>
-                            {p.packageList.join(' / ')}
-                            {p.userNote && ` / 추가 요청사항 / ${p.userNote}`}
-                          </p>
-                        ))}
+                      <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px] flex flex-col gap-0.5">
+                        {gumseongpumPkgs.map((p, i) => {
+                          const additionalOpts = p.packageList.filter((l: string) => l !== '구성품만')
+                          return (
+                            <Fragment key={i}>
+                              {additionalOpts.length > 0 && <p>{additionalOpts.join(' / ')}</p>}
+                              {p.userNote && <p>추가 요청사항 / {p.userNote}</p>}
+                            </Fragment>
+                          )
+                        })}
                       </div>
                     </div>
                   </div>
-                ) : (
-                  /* 회색 텍스트 (구성품만 없고 userNote 있을 때) */
-                  <div className="px-4 py-3">
+                )}
+                {/* 추가 요청사항 (구성품만 아닌 패키지) — 구성품만 존재 여부와 무관하게 항상 표시 */}
+                {notePackages.length > 0 && (
+                  <div className={cn('px-4 py-3', hasGumseongpum && 'border-t border-[#dee2e6]')}>
                     {notePackages.map((p, i) => (
                       <p key={i} className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
-                        추가 요청 사항 / {p.userNote}
+                        추가 요청사항 / {p.userNote}
                       </p>
                     ))}
                   </div>
@@ -290,21 +311,23 @@ export function PackagingCompleteContent({ request }: Props) {
             packages={request.packages}
             getItemQty={(pkgIdx, prodIdx) => qtys[pkgIdx]?.[prodIdx] ?? 0}
             totalAllocations={totalAllocations}
+            allPkgAllocations={allPkgAllocations}
             onUpdateQty={updateQty}
             showInfobox
           />
 
           {/* 추가 패키지 카드들 */}
-          {addedPkgs.map((ap, idx) => (
+          {addedPkgs.map((ap: AddedPkg, idx: number) => (
             <PackageWorkCard
               key={ap.id}
               cardLabel={`📦 추가 패키지 #${idx + 2}`}
               packages={request.packages}
               getItemQty={(pkgIdx, prodIdx) => ap.qtys[`${pkgIdx}-${prodIdx}`] ?? 0}
               totalAllocations={totalAllocations}
+              allPkgAllocations={allPkgAllocations}
               showItem={(pkgIdx, prodIdx) => (`${pkgIdx}-${prodIdx}` in ap.qtys)}
               onUpdateQty={(pkgIdx, prodIdx, val) => updateAddedQty(ap.id, pkgIdx, prodIdx, val)}
-              showInfobox={false}
+              showInfobox
               onDelete={() => setDeleteTarget({ id: ap.id, label: `추가 패키지 #${idx + 2}` })}
             />
           ))}
@@ -394,13 +417,14 @@ interface PackageWorkCardProps {
   packages: SubPackage[]
   getItemQty: (pkgIdx: number, prodIdx: number) => number
   totalAllocations: PackageQtys
+  allPkgAllocations: PkgAllocationEntry[]
   showItem?: (pkgIdx: number, prodIdx: number) => boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
   showInfobox?: boolean
   onDelete?: () => void
 }
 
-function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, showItem, onUpdateQty, showInfobox = true, onDelete }: PackageWorkCardProps) {
+function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, allPkgAllocations, showItem, onUpdateQty, showInfobox = true, onDelete }: PackageWorkCardProps) {
   return (
     <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
       {/* ── 헤더 ── */}
@@ -428,6 +452,8 @@ function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, sh
         packages={packages}
         getItemQty={getItemQty}
         totalAllocations={totalAllocations}
+        allPkgAllocations={allPkgAllocations}
+        currentPkgLabel={cardLabel}
         showItem={showItem}
         onUpdateQty={onUpdateQty}
         showInfobox={showInfobox}
@@ -555,6 +581,8 @@ interface ProductTableProps {
   packages: SubPackage[]
   getItemQty: (pkgIdx: number, prodIdx: number) => number
   totalAllocations: PackageQtys
+  allPkgAllocations: PkgAllocationEntry[]
+  currentPkgLabel: string
   showItem?: (pkgIdx: number, prodIdx: number) => boolean
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
   showInfobox?: boolean
@@ -563,7 +591,7 @@ interface ProductTableProps {
 // 패키징 옵션 정렬 순서
 const OPTION_ORDER: Record<string, number> = { '합포장': 0, '구성품만': 1, 'POB만': 2, '전체': 3 }
 
-function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpdateQty, showInfobox = true }: ProductTableProps) {
+function ProductTable({ packages, getItemQty, totalAllocations, allPkgAllocations, currentPkgLabel, showItem, onUpdateQty, showInfobox = true }: ProductTableProps) {
   const [collapsed, setCollapsed] = useState(false)
 
   // ── 패키징 옵션 순서(합포장→구성품만→POB만)로 정렬 후 rowData 빌드 ──────────
@@ -682,6 +710,11 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
                   const totalAllocated = totalAllocations[pkgOrigIdx]?.[prodOrigIdx] ?? 0
                   const isZeroed       = isOptionPkg && !product.isPob && originalQty === 0
                   const badge          = getBadge(originalQty, totalAllocated)
+                  // 분할포장: 여러 패키지에 수량이 나뉜 경우
+                  const pkgBreakdown = allPkgAllocations
+                    .map(p => ({ label: p.label, qty: p.getQty(pkgOrigIdx, prodOrigIdx) }))
+                    .filter(p => p.qty > 0)
+                  const isPkgSplit = pkgBreakdown.length > 1
 
                   return (
                     <tr key={`${pkgOrigIdx}-${prodOrigIdx}`}>
@@ -741,18 +774,38 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
                                 ({product.preOptionQty}개)
                               </span>
                             )}
-                            {badge?.type === 'split' && totalAllocated === 0 && originalQty > 0 && (
-                              <Badge size="sm" type="round" color="yellow">미할당</Badge>
-                            )}
-                            {badge?.type === 'split' && totalAllocated > 0 && (
-                              <Badge size="sm" type="round" color="yellow">
-                                ✂️ 분할 포장 / {badge.remaining}개 남음
-                              </Badge>
-                            )}
-                            {badge?.type === 'over' && (
+                            {badge?.type === 'over' ? (
                               <Badge size="sm" type="round" color="green">
                                 요청 반영 / {badge.excess}개
                               </Badge>
+                            ) : isPkgSplit ? (
+                              <>
+                                <Badge size="sm" type="round" color="yellow">✂️ 분할 포장</Badge>
+                                {pkgBreakdown
+                                  .filter(p => p.label !== currentPkgLabel)
+                                  .map((p, i) => (
+                                    <Badge key={i} size="sm" type="round" color="yellow">
+                                      {p.label.replace(/^📦 /, '')} / {p.qty}개
+                                    </Badge>
+                                  ))
+                                }
+                                {totalAllocated < originalQty && (
+                                  <Badge size="sm" type="round" color="yellow">
+                                    {originalQty - totalAllocated}개 미할당
+                                  </Badge>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                {badge?.type === 'split' && totalAllocated === 0 && originalQty > 0 && (
+                                  <Badge size="sm" type="round" color="yellow">미할당</Badge>
+                                )}
+                                {badge?.type === 'split' && totalAllocated > 0 && (
+                                  <Badge size="sm" type="round" color="yellow">
+                                    ✂️ 분할 포장 / {badge.remaining}개 남음
+                                  </Badge>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>
