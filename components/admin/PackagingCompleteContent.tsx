@@ -132,18 +132,19 @@ export function PackagingCompleteContent({ request }: Props) {
     ))
   }
 
-  // 구성품만 / POB만 옵션 → 옵션 타입별로 딱 한 번만 노출 (중복 제거)
-  const optionInfoGroups = useMemo(() => {
-    const map = new Map<string, SubPackage[]>()
-    request.packages.forEach(pkg => {
-      if (pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만') {
-        const arr = map.get(pkg.packagingOption) ?? []
-        arr.push(pkg)
-        map.set(pkg.packagingOption, arr)
-      }
-    })
-    return Array.from(map.entries()) // [['구성품만', [...]], ['POB만', [...]]]
-  }, [request.packages])
+  // 구성품만 옵션 패키지들 (핑크 인포박스 — 구성품만만, POB만 제외)
+  const gumseongpumPkgs = useMemo(
+    () => request.packages.filter(p => p.packagingOption === '구성품만'),
+    [request.packages],
+  )
+  const hasGumseongpum = gumseongpumPkgs.length > 0
+
+  // 구성품만 없을 때 표시할 userNote 목록 (회색 텍스트)
+  const notePackages = useMemo(
+    () => (!hasGumseongpum ? request.packages.filter(p => p.userNote) : []),
+    [hasGumseongpum, request.packages],
+  )
+  const hasInnerInfo = hasGumseongpum || notePackages.length > 0
 
   return (
     <>
@@ -220,49 +221,68 @@ export function PackagingCompleteContent({ request }: Props) {
 
         {/* ── 작업 정보 입력 ── */}
 
-        {/* 타이틀 헤더 — content wrapper의 직속 자식으로 sticky (containing block = 전체 콘텐츠) */}
-        <div className={cn(
-          'sticky top-0 z-10 bg-white border border-[#dee2e6] flex items-center justify-between px-4 h-[56px]',
-          optionInfoGroups.length > 0 ? 'rounded-t-[12px]' : 'rounded-[12px]',
-        )}>
-          <h2 className="text-[18px] font-bold text-[#212529] leading-7 tracking-[-0.3px]">작업 정보 입력</h2>
-          <button
-            onClick={handleAddPackage}
-            className="flex items-center gap-2 h-8 px-[10px] rounded-[8px] border border-[#dee2e6] bg-white text-[14px] font-bold text-[#212529] leading-5 tracking-[-0.3px] hover:bg-[#f8f9fa] transition-colors"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-              <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-            패키지 추가하기
-          </button>
-        </div>
-
-        {/* 인포박스 — 옵션 타입별 딱 1개씩, 타이틀과 연결된 카드 하단 */}
-        {optionInfoGroups.length > 0 && (
-          <div className="-mt-4 border-x border-b border-[#dee2e6] rounded-b-[12px] overflow-hidden">
-            {optionInfoGroups.map(([option, pkgs], i) => (
-              <div key={option} className={cn(
-                'flex items-start gap-2 px-4 py-3 bg-[#fff4f8]',
-                i < optionInfoGroups.length - 1 && 'border-b border-[#dee2e6]',
-              )}>
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
-                  <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                  <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <circle cx="8" cy="11" r=".75" fill="currentColor" />
+        {/* sticky 래퍼 — 타이틀 + 인포박스 모두 포함하여 함께 따라붙음 */}
+        <div className="sticky top-0 z-10">
+          <div className={cn(
+            'border border-[#dee2e6] bg-white',
+            hasInnerInfo ? 'rounded-t-[12px]' : 'rounded-[12px]',
+          )}>
+            {/* 타이틀 */}
+            <div className={cn(
+              'flex items-center justify-between px-4 h-[56px]',
+              hasInnerInfo && 'border-b border-[#dee2e6]',
+            )}>
+              <h2 className="text-[18px] font-bold text-[#212529] leading-7 tracking-[-0.3px]">작업 정보 입력</h2>
+              <button
+                onClick={handleAddPackage}
+                className="flex items-center gap-2 h-8 px-[10px] rounded-[8px] border border-[#dee2e6] bg-white text-[14px] font-bold text-[#212529] leading-5 tracking-[-0.3px] hover:bg-[#f8f9fa] transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                 </svg>
-                <div className="min-w-0 flex flex-col gap-1">
-                  <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
-                    {option} 옵션이 포함된 패키지입니다
-                  </p>
-                  <p className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
-                    {pkgs.map(p => p.packageList.join(' / ')).join(' · ')}
-                    {pkgs.some(p => p.userNote) && ` / 추가 요청사항 / ${pkgs.filter(p => p.userNote).map(p => p.userNote).join(', ')}`}
-                  </p>
-                </div>
+                패키지 추가하기
+              </button>
+            </div>
+
+            {/* 인포박스 — 구성품만 있을 때: 핑크 / 없고 userNote 있을 때: 회색 */}
+            {hasInnerInfo && (
+              <div className="overflow-hidden rounded-b-[12px]">
+                {hasGumseongpum ? (
+                  /* 핑크 인포박스 (구성품만 옵션 존재 시) */
+                  <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
+                      <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="8" cy="11" r=".75" fill="currentColor" />
+                    </svg>
+                    <div className="min-w-0 flex flex-col gap-1">
+                      <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
+                        구성품만 옵션이 포함된 패키지입니다
+                      </p>
+                      <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
+                        {gumseongpumPkgs.map((p, i) => (
+                          <p key={i}>
+                            {p.packageList.join(' / ')}
+                            {p.userNote && ` / 추가 요청사항 / ${p.userNote}`}
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  /* 회색 텍스트 (구성품만 없고 userNote 있을 때) */
+                  <div className="px-4 py-3">
+                    {notePackages.map((p, i) => (
+                      <p key={i} className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
+                        추가 요청 사항 / {p.userNote}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
+            )}
           </div>
-        )}
+        </div>
 
         {/* 패키지 카드들 */}
         <div className="space-y-3">
@@ -647,6 +667,13 @@ function ProductTable({ packages, getItemQty, totalAllocations, showItem, onUpda
                 </tr>
               </thead>
               <tbody>
+                {rows.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="border border-border-default bg-white px-4 py-4 text-center">
+                      <p className="text-[14px] text-[#868e96] leading-5 tracking-[-0.3px]">패키지 내 포장된 상품이 없습니다.</p>
+                    </td>
+                  </tr>
+                )}
                 {rows.map(({ pkgOrigIdx, pkg, prodOrigIdx, product, isFirstInOption, isFirstInPkg, optionRowSpan, pkgRowSpan }) => {
                   const isOptionPkg    = pkg.packagingOption === '구성품만' || pkg.packagingOption === 'POB만'
                   const parentProduct  = isOptionPkg
