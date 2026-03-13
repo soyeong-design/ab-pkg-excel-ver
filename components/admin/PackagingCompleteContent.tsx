@@ -212,43 +212,45 @@ export function PackagingCompleteContent({ request }: Props) {
 
         {/* ── 작업 정보 입력 ── */}
         <div className="space-y-3">
-          {/* 헤더 (sticky) */}
-          <div className="sticky top-0 z-10 bg-bg-default rounded-xl border border-border-default flex items-center justify-between px-4 py-3">
-            <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">작업 정보 입력</h2>
-            <button
-              onClick={handleAddPackage}
-              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border-default bg-bg-default text-label-md text-fg-default hover:bg-bg-subtle transition-colors"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              패키지 추가하기
-            </button>
-          </div>
-
-          {/* 구성품만/POB만 infobox */}
-          {optionPackages.length > 0 && (
-            <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
-              {optionPackages.map((pkg, i) => (
-                <div key={i} className="flex items-start gap-3 px-4 py-3 bg-bg-accent-brand1-subtlest border-b border-border-accent-brand1-subtlest last:border-b-0">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-fg-accent-brand1-default shrink-0 mt-0.5" aria-hidden="true">
-                    <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                    <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    <circle cx="8" cy="11" r=".75" fill="currentColor" />
-                  </svg>
-                  <div className="min-w-0">
-                    <p className="text-label-bold-sm text-fg-accent-brand1-default">
-                      {pkg.packagingOption} 옵션이 포함된 패키지입니다
-                    </p>
-                    <p className="text-label-sm text-fg-subtle mt-0.5">
-                      {pkg.packageList.join(' / ')}
-                      {pkg.userNote ? ` / 추가 요청사항 / ${pkg.userNote}` : ''}
-                    </p>
-                  </div>
-                </div>
-              ))}
+          {/* 헤더 카드 (타이틀 sticky + 인포박스) */}
+          <div className="rounded-[12px] border border-[#dee2e6] bg-white">
+            {/* 타이틀 - sticky */}
+            <div className="sticky top-0 z-10 bg-white rounded-t-[12px] flex items-center justify-between px-4 h-[56px] border-b border-[#dee2e6]">
+              <h2 className="text-[18px] font-bold text-[#212529] leading-7 tracking-[-0.3px]">작업 정보 입력</h2>
+              <button
+                onClick={handleAddPackage}
+                className="flex items-center gap-2 h-8 px-[10px] rounded-[8px] border border-[#dee2e6] bg-white text-[14px] font-bold text-[#212529] leading-5 tracking-[-0.3px] hover:bg-[#f8f9fa] transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M9 3v12M3 9h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                패키지 추가하기
+              </button>
             </div>
-          )}
+            {/* 인포박스 - 타이틀과 하나의 카드 안에 */}
+            {optionPackages.length > 0 && (
+              <div className="overflow-hidden rounded-b-[12px]">
+                {optionPackages.map((pkg, i) => (
+                  <div key={i} className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8] border-b border-[#dee2e6] last:border-b-0">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
+                      <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="8" cy="11" r=".75" fill="currentColor" />
+                    </svg>
+                    <div className="min-w-0 flex flex-col gap-1">
+                      <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
+                        {pkg.packagingOption} 옵션이 포함된 패키지입니다
+                      </p>
+                      <p className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
+                        {pkg.packageList.join(' / ')}
+                        {pkg.userNote ? ` / 추가 요청사항 / ${pkg.userNote}` : ''}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* 📦 기본 패키지 #1 카드 */}
           <PackageWorkCard

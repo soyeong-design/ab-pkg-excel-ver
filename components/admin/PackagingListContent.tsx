@@ -195,7 +195,7 @@ export function PackagingListContent() {
         </div>
       </div>
 
-      <div className="flex-1 px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
         {/* Search panel */}
         <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
           <div
