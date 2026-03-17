@@ -138,7 +138,7 @@ export function PackagingCompleteContent({ request }: Props) {
     () => request.packages.filter(p => p.packagingOption !== '구성품만' && p.userNote),
     [request.packages],
   )
-  const hasInnerInfo = hasGumseongpum || notePackages.length > 0
+  const hasInnerInfo = hasGumseongpum || notePackages.length > 0 || !!adminMemo
 
   // 전체 패키지 할당 정보 (분할포장 뱃지용)
   const allPkgAllocations = useMemo<PkgAllocationEntry[]>(() => [
@@ -208,42 +208,36 @@ export function PackagingCompleteContent({ request }: Props) {
 
               {/* 인포박스 내용 */}
               {!infoSectionCollapsed && (
-                <div className="overflow-hidden">
-                  {hasGumseongpum && (
-                    <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
-                        <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                        <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                        <circle cx="8" cy="11" r=".75" fill="currentColor" />
-                      </svg>
-                      <div className="min-w-0 flex flex-col gap-1">
-                        <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
-                          구성품만 옵션이 포함된 패키지입니다
-                        </p>
-                        <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px] flex flex-col gap-0.5">
-                          {gumseongpumPkgs.map((p, i) => {
-                            const additionalOpts = p.packageList.filter((l: string) => l !== '구성품만')
-                            return (
-                              <Fragment key={i}>
-                                {additionalOpts.length > 0 && <p>{additionalOpts.join(' / ')}</p>}
-                                {p.userNote && <p>추가 요청사항 / {p.userNote}</p>}
-                              </Fragment>
-                            )
-                          })}
-                          {notePackages.length > 0 && (
-                            <p>추가 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {!hasGumseongpum && notePackages.length > 0 && (
-                    <div className="px-4 py-3">
-                      <p className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px]">
-                        추가 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}
+                <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
+                    <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                    <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    <circle cx="8" cy="11" r=".75" fill="currentColor" />
+                  </svg>
+                  <div className="min-w-0 flex flex-col gap-1">
+                    {hasGumseongpum && (
+                      <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
+                        구성품만 옵션이 포함된 패키지입니다
                       </p>
+                    )}
+                    <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px] flex flex-col gap-0.5">
+                      {hasGumseongpum && gumseongpumPkgs.map((p, i) => {
+                        const additionalOpts = p.packageList.filter((l: string) => l !== '구성품만')
+                        return (
+                          <Fragment key={i}>
+                            {additionalOpts.length > 0 && <p>{additionalOpts.join(' / ')}</p>}
+                            {p.userNote && <p>유저 요청사항 / {p.userNote}</p>}
+                          </Fragment>
+                        )
+                      })}
+                      {notePackages.length > 0 && (
+                        <p>유저 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}</p>
+                      )}
+                      {adminMemo && (
+                        <p>관리자 메모 / {adminMemo}</p>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
