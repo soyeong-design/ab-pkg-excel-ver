@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo, Fragment, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
@@ -140,6 +140,23 @@ export function PackagingCompleteContent({ request }: Props) {
   )
   const hasInnerInfo = hasGumseongpum || notePackages.length > 0 || !!adminMemo
 
+  // 작업 참고사항 sticky 감지
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const sentinelRef = useRef<HTMLDivElement>(null)
+  const [isInfoStuck, setIsInfoStuck] = useState(false)
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current
+    const root = scrollContainerRef.current
+    if (!sentinel || !root) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInfoStuck(!entry.isIntersecting),
+      { root, rootMargin: '-100px 0px 0px 0px', threshold: 0 },
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
+
   // 전체 패키지 할당 정보 (분할포장 뱃지용)
   const allPkgAllocations = useMemo<PkgAllocationEntry[]>(() => [
     {
@@ -154,13 +171,11 @@ export function PackagingCompleteContent({ request }: Props) {
 
   return (
     <>
-      {/* ── 스크롤 콘텐츠 영역 (sticky header 포함) ── */}
-      <div className="flex-1 overflow-y-auto">
+      {/* ── 스크롤 콘텐츠 영역 ── */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
 
-        {/* ── Sticky 최상단: 헤더 바 + 작업 참고사항 ── */}
+        {/* ── Sticky 최상단: 헤더 바 ── */}
         <div className="sticky top-0 z-20 bg-white">
-
-          {/* 헤더 바 */}
           <div className="h-[100px] px-4 flex items-center justify-between border-b border-[#dee2e6] bg-white">
             {/* 왼쪽: 뒤로가기 + 페이지 타이틀 */}
             <div className="flex flex-col">
@@ -187,68 +202,13 @@ export function PackagingCompleteContent({ request }: Props) {
               포장 패키지 추가하기
             </button>
           </div>
-
-          {/* 작업 참고사항 — 인포박스 존재 시만 표시 */}
-          {hasInnerInfo && (
-            <div className="bg-white border-b border-[#dee2e6]">
-              {/* 타이틀 행 (접기/펼치기) */}
-              <button
-                onClick={() => setInfoSectionCollapsed(v => !v)}
-                className="w-full flex items-center justify-between px-4 py-2 border-b border-[#dee2e6] hover:bg-[#f8f9fa] transition-colors"
-              >
-                <span className="text-[16px] font-semibold text-[#212529] leading-6 tracking-[-0.3px]">작업 참고사항</span>
-                <svg
-                  width="16" height="16" viewBox="0 0 16 16" fill="none"
-                  className={cn('text-[#868e96] transition-transform', infoSectionCollapsed && 'rotate-180')}
-                  aria-hidden="true"
-                >
-                  <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
-
-              {/* 인포박스 내용 */}
-              {!infoSectionCollapsed && (
-                <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
-                    <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-                    <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    <circle cx="8" cy="11" r=".75" fill="currentColor" />
-                  </svg>
-                  <div className="min-w-0 flex flex-col gap-1">
-                    {hasGumseongpum && (
-                      <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
-                        구성품만 옵션이 포함된 패키지입니다
-                      </p>
-                    )}
-                    <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px] flex flex-col gap-0.5">
-                      {hasGumseongpum && gumseongpumPkgs.map((p, i) => {
-                        const additionalOpts = p.packageList.filter((l: string) => l !== '구성품만')
-                        return (
-                          <Fragment key={i}>
-                            {additionalOpts.length > 0 && <p>{additionalOpts.join(' / ')}</p>}
-                            {p.userNote && <p>유저 요청사항 / {p.userNote}</p>}
-                          </Fragment>
-                        )
-                      })}
-                      {notePackages.length > 0 && (
-                        <p>유저 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}</p>
-                      )}
-                      {adminMemo && (
-                        <p>관리자 메모 / {adminMemo}</p>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
         {/* ── 스크롤 콘텐츠 ── */}
-        <div className="px-6 pt-5 pb-8 max-w-[1240px] mx-auto space-y-4">
+        <div className="px-6 pt-5 pb-8 max-w-[1240px] mx-auto">
 
           {/* ── 패키징 기본 정보 입력 (이미지/비디오 업로드만) ── */}
-          <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
+          <div className="mb-4 bg-bg-default rounded-xl border border-border-default overflow-hidden">
             <div className="px-4 py-3 border-b border-border-default">
               <h2 className="text-[18px] font-bold text-fg-default leading-7 tracking-tight">패키징 기본 정보 입력</h2>
             </div>
@@ -274,8 +234,73 @@ export function PackagingCompleteContent({ request }: Props) {
             </div>
           </div>
 
+          {/* ── 작업 참고사항 — sentinel + sticky 카드 ── */}
+          {hasInnerInfo && (
+            <>
+              {/* sentinel: 이 div가 헤더(100px) 위로 사라질 때 isInfoStuck = true */}
+              <div ref={sentinelRef} className="h-0" />
+
+              <div className={cn(
+                'sticky z-10 mb-4 bg-white overflow-hidden top-[100px]',
+                isInfoStuck
+                  ? 'rounded-none border-b border-[rgba(0,0,0,0.24)]'
+                  : 'rounded-xl border border-[rgba(0,0,0,0.24)]',
+              )}>
+                {/* 타이틀 행 (접기/펼치기) */}
+                <button
+                  onClick={() => setInfoSectionCollapsed(v => !v)}
+                  className="w-full flex items-center justify-between px-4 py-2 border-b border-[#dee2e6] hover:bg-[#f8f9fa] transition-colors"
+                >
+                  <span className="text-[16px] font-semibold text-[#212529] leading-6 tracking-[-0.3px]">작업 참고사항</span>
+                  <svg
+                    width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    className={cn('text-[#868e96] transition-transform', infoSectionCollapsed && 'rotate-180')}
+                    aria-hidden="true"
+                  >
+                    <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
+
+                {/* 인포박스 내용 */}
+                {!infoSectionCollapsed && (
+                  <div className="flex items-start gap-2 px-4 py-3 bg-[#fff4f8]">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#ff558f] shrink-0 mt-0.5" aria-hidden="true">
+                      <path d="M8 2.5L14.5 13.5H1.5L8 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+                      <path d="M8 6.5v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <circle cx="8" cy="11" r=".75" fill="currentColor" />
+                    </svg>
+                    <div className="min-w-0 flex flex-col gap-1">
+                      {hasGumseongpum && (
+                        <p className="text-[14px] font-bold text-[#ff558f] leading-5 tracking-[-0.3px]">
+                          구성품만 옵션이 포함된 패키지입니다
+                        </p>
+                      )}
+                      <div className="text-[12px] font-semibold text-[#868e96] leading-4 tracking-[-0.3px] flex flex-col gap-0.5">
+                        {hasGumseongpum && gumseongpumPkgs.map((p, i) => {
+                          const additionalOpts = p.packageList.filter((l: string) => l !== '구성품만')
+                          return (
+                            <Fragment key={i}>
+                              {additionalOpts.length > 0 && <p>{additionalOpts.join(' / ')}</p>}
+                              {p.userNote && <p>유저 요청사항 / {p.userNote}</p>}
+                            </Fragment>
+                          )
+                        })}
+                        {notePackages.length > 0 && (
+                          <p>유저 요청사항 / {notePackages.map(p => p.userNote).join(' / ')}</p>
+                        )}
+                        {adminMemo && (
+                          <p>관리자 메모 / {adminMemo}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
           {/* ── 패키지 카드들 ── */}
-          <div className="space-y-3">
+          <div className="space-y-3 mb-4">
             {/* 📦 기본 패키지 #1 카드 */}
             <PackageWorkCard
               cardLabel="📦 기본 패키지 #1"
