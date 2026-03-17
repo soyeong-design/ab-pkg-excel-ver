@@ -241,10 +241,10 @@ export function PackagingCompleteContent({ request }: Props) {
               <div ref={sentinelRef} className="h-0" />
 
               <div className={cn(
-                'sticky z-10 mb-4 bg-white overflow-hidden top-[100px]',
+                'sticky z-10 bg-white overflow-hidden top-[100px]',
                 isInfoStuck
                   ? 'rounded-none border-b border-[rgba(0,0,0,0.24)]'
-                  : 'rounded-xl border border-[rgba(0,0,0,0.24)]',
+                  : 'rounded-t-xl border-t border-l border-r border-border-default',
               )}>
                 {/* 타이틀 행 (접기/펼치기) */}
                 <button
@@ -310,6 +310,7 @@ export function PackagingCompleteContent({ request }: Props) {
               allPkgAllocations={allPkgAllocations}
               onUpdateQty={updateQty}
               showInfobox
+              connectedTop={hasInnerInfo && !isInfoStuck}
             />
 
             {/* 추가 패키지 카드들 */}
@@ -460,11 +461,15 @@ interface PackageWorkCardProps {
   onUpdateQty: (pkgIdx: number, prodIdx: number, value: string) => void
   showInfobox?: boolean
   onDelete?: () => void
+  connectedTop?: boolean
 }
 
-function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, allPkgAllocations, showItem, onUpdateQty, showInfobox = true, onDelete }: PackageWorkCardProps) {
+function PackageWorkCard({ cardLabel, packages, getItemQty, totalAllocations, allPkgAllocations, showItem, onUpdateQty, showInfobox = true, onDelete, connectedTop }: PackageWorkCardProps) {
   return (
-    <div className="bg-bg-default rounded-xl border border-border-default overflow-hidden">
+    <div className={cn(
+      'bg-bg-default border border-border-default overflow-hidden',
+      connectedTop ? 'rounded-b-xl rounded-t-none border-t-0' : 'rounded-xl',
+    )}>
       {/* ── 헤더 ── */}
       <div className="flex items-center justify-between px-4 py-[8px] bg-[#f8f9fa] border-b border-[#dee2e6] min-h-[48px]">
         <span className="text-[16px] font-semibold text-[#212529] leading-6 tracking-[-0.3px]">{cardLabel}</span>
